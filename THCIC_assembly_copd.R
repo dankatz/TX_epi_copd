@@ -60,22 +60,18 @@ op_data_2018_2020$PAT_ADDR_CENSUS_BLOCK_GROUP <- stringi::stri_pad_right(op_data
 
 #save 
 write_csv(op_data_2018_2020, "Z:/THCIC/Outpatient THCIC data 2018-2020/OPTexasCOPD18_20_enc_date.csv")
-
-
-
-###### PICK THIS UP HERE:
-
+#op_data_2018_2020 <- read_csv("Z:/THCIC/Outpatient THCIC data 2018-2020/OPTexasCOPD18_20_enc_date.csv")
 
 
 
 
-### outpatient:  extracting asthma records from the 2015 q4 - 2017 data ##################################################################################
+### outpatient data for COPD (J44): 2015 q4 - 2017 data ##################################################################################
 #we want the 'base' files; 'charges' contain revenue codes
 
 setwd("Z:/THCIC/Outpatient THCIC data 2015Q4-2017/OP Decrypted")
 yearly_files <- c("OP4q2015_Base.txt", "OP2016_Base.txt", "OP2017_Base.txt")
 
-icd10_codes <- "J45"  #paste(c("J45")) #Asthma - not bothering to exclude any of them  collapse = "|") 
+icd10_codes <- "J44"  #paste(c("J44")) #COPD - not bothering to exclude any of them  collapse = "|") 
 
 for(i in 1:length(yearly_files)){
   file_i <- read_tsv(yearly_files[i], #n_max = 10000,
@@ -107,7 +103,7 @@ op_data_2015_2017$ETHNICITY <- factor(op_data_2015_2017$ETHNICITY, labels = c("M
 
 
 table(op_data_2015_2017$RACE, op_data_2015_2017$ETHNICITY)
-# there are 6926 cases that are Black and Latinx
+# there are 884 cases that are Black and Latinx
 
 # creating a new variable that combines race and ethnicity
 # if a person is Black and Latinx, they are categorized as Black
@@ -115,18 +111,20 @@ table(op_data_2015_2017$RACE, op_data_2015_2017$ETHNICITY)
 op_data_2015_2017$RACE_ETHNICITY[op_data_2015_2017$ETHNICITY == "Non-Latinx" &  op_data_2015_2017$RACE == "White"] <- "White"
 op_data_2015_2017$RACE_ETHNICITY[op_data_2015_2017$ETHNICITY == "Latinx"] <- "Latinx"
 op_data_2015_2017$RACE_ETHNICITY[op_data_2015_2017$RACE == "Black"] <- "Black"
-write.csv(op_data_2015_2017, "Z:/THCIC/Katz/op_asthma_2015q4_2017.csv", row.names = FALSE)
+write.csv(op_data_2015_2017, "Z:/THCIC/Katz/op_copd_2015q4_2017.csv", row.names = FALSE)
+
+
 
 ### outpatient: combining the outpatient 2015 q4 - 2017 data with the 2018-2020 data #################################################################################
 str(op_data_2015_2017)
-str(OPTexasAsthma18_20_enc)
+str(op_data_2018_2020)
 
-op_data_2015_2017 <- op_data_2015_2017 %>% mutate(SOURCE_OF_ADMISSION= as.numeric(SOURCE_OF_ADMISSION))
-OPTexasAsthma18_20_enc <- OPTexasAsthma18_20_enc %>% mutate(PAT_ADDR_CENSUS_BLOCK_GROUP= as.character(PAT_ADDR_CENSUS_BLOCK_GROUP),
+op_data_2015_2017 <- op_data_2015_2017 %>% mutate(SOURCE_OF_ADMISSION = as.character(SOURCE_OF_ADMISSION))
+op_data_2018_2020 <- op_data_2018_2020 %>% mutate(PAT_ADDR_CENSUS_BLOCK_GROUP= as.character(PAT_ADDR_CENSUS_BLOCK_GROUP),
                                                             PAT_AGE_GROUP = as.numeric(PAT_AGE_GROUP))
 
-op_asthma_2015q4_2020 <- bind_rows(OPTexasAsthma18_20_enc, op_data_2015_2017)
-write_csv(op_asthma_2015q4_2020, "Z:/THCIC/Katz/op_asthma_2015q4_2020.csv")
+op_asthma_2015q4_2020 <- bind_rows(op_data_2018_2020, op_data_2015_2017)
+write_csv(op_asthma_2015q4_2020, "Z:/THCIC/Katz/op_copd_2015q4_2020.csv")
 
 
 
