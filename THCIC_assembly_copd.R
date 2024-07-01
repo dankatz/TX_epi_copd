@@ -67,17 +67,6 @@ op2020 <- left_join(op2020full, op2020hospitalID, by = "RECORD_ID") %>%
   filter(str_detect(PRINC_DIAG_CODE, "^J44."))
 
 
-# op2018_full <- read_csv("Z:/THCIC/Outpatient THCIC data 2018-2020/Filtered Data/op2018_full.csv", guess_max = 10000) %>% 
-#   filter(., str_detect(PRINC_DIAG_CODE, "^J44.")) #doing the filtering at this step to save some memory
-# op2019_full <- read_csv("Z:/THCIC/Outpatient THCIC data 2018-2020/Filtered Data/op2019_full.csv", guess_max = 10000) %>% 
-#   filter(., str_detect(PRINC_DIAG_CODE, "^J44.")) 
-# op2020_full <- read_csv("Z:/THCIC/Outpatient THCIC data 2018-2020/Filtered Data/op2020_full.csv", guess_max = 10000) %>% 
-#   filter(., str_detect(PRINC_DIAG_CODE, "^J44.")) 
-# 
-# op2018enc <- read_tsv("Z:/THCIC/Outpatient THCIC data 2018-2020/op_2018_enc.txt")
-# op2019enc <- read_tsv("Z:/THCIC/Outpatient THCIC data 2018-2020/op_2019_enc.txt")
-# op2020enc <- read_tsv("Z:/THCIC/Outpatient THCIC data 2018-2020/op_2020_enc.txt")
-
 ### combine the dfs from each year
 dfs_to_keep <- c("op2018", "op2019", "op2020")
 rm(list=setdiff(ls(), dfs_to_keep))
@@ -189,10 +178,6 @@ op_data_2018_2020 <- op_data_2018_2020 %>% mutate(PAT_ADDR_CENSUS_BLOCK_GROUP= a
 
 op_copd_2015q4_2020 <- bind_rows(op_data_2018_2020, op_data_2015_2017)
 write_csv(op_copd_2015q4_2020, "Z:/THCIC/Katz/op_copd_2015q4_2020.csv")
-
-
-
-
 
 
 

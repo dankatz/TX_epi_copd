@@ -28,7 +28,7 @@ library(cowplot)
 # opa_day_adult <- read_csv("Z:/THCIC/Katz/opa_day_ages_18_99_dist_10_2022-12-21.csv", guess_max = 8260)
 
 #25 km main analysis
-opa_day_adult <- read_csv("Z:/THCIC/Katz/opa_day_copd_ages_40_110_dist_25_2024-06-30.csv", guess_max = 8260)
+opa_day_adult <- read_csv("Z:/THCIC/Katz/opa_day_copd_ages_40_110_dist_25_2024-07-01.csv", guess_max = 8260)
 #sum(opa_day_youngchildren$n_cases) +sum(opa_day_schoolchildren$n_cases) + sum(opa_day_adult$n_cases)
 
 #50 km sensitivity analysis
@@ -178,7 +178,7 @@ ts_panels <- cowplot::plot_grid(#panel_ed_youngchild, panel_ed,
                                 label_size = 11,
                                 label_x = 0.17, label_y = 0.8,
                                 hjust = 0, vjust = 0)
-ggsave(file = "Z:/THCIC/Katz/copd_results/time_series_fig_240630.jpg", plot = ts_panels,
+ggsave(file = "Z:/THCIC/Katz/copd_results/time_series_fig_240701.jpg", plot = ts_panels,
        height = 24, width = 18, units = "cm", dpi = 300)
 
 

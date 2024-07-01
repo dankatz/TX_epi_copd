@@ -22,7 +22,7 @@ library(daymetr)
 
 
 #note: will need to do a final extraction of numbers of cases where census block is missing and zipcode is used
-# need to also decide for sure about whether 40 is a good cut off point
+# need to also decide for sure about whether 40 years old is a good cut off point
 
 #rm(list = ls())
 
@@ -380,4 +380,5 @@ write_csv(opa_day_agegroup_x, csv_file_name)
 #summary(opa_day_agegroup_x)
 
 }### end the distance and agegroup loop
+
 unique(opa_day_agegroup_x$NAB_station)
