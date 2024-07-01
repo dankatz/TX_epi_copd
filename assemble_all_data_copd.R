@@ -9,7 +9,8 @@ library(ggplot2)
 library(ggthemes)
 library(scales)
 library(stringr)
-library(zipcode) #downloaded from the archives, no longer on CRAN
+#library(zipcode) #downloaded from the archives, no longer on CRAN
+library(zipcodeR)
 library(sf)
 #library(noncensus) #not available for R 4.0.0 yet
 library(zoo)
@@ -26,23 +27,21 @@ library(daymetr)
 #removing Waco B because of data quality issues
 
 ### start loop to go through all the distance thresholds ##############################
-dist_threshold_list <- rep(c(10, 25, 50), 3)
-age_low_list <- c(0,0,0, 5,5,5, 18,18,18)
-age_hi_list <- c(4,4,4, 17,17,17, 99,99,99)
+dist_threshold_list <- rep(c(10, 25, 50), 1)
+age_low_list <- c(40, 40, 40)
+age_hi_list <- c(99, 99, 99)
 
-for(dist_age in 1:9){ #dist_age <- 1
-  print(paste("distance:", dist_threshold_list[dist_age]))
-  print(paste("age low:", age_low_list[dist_age]))
-  print(paste("age hi:", age_hi_list[dist_age]))
+for(dist in 1:3){ #dist <- 1
+  print(paste("distance:", dist_threshold_list[dist]))
 
 
 ### options for different data subsets
 # distance cutoff from NAB station
-NAB_min_dist_threshold <- dist_threshold_list[dist_age] 
+NAB_min_dist_threshold <- dist_threshold_list[dist] 
 
 # define target age range here 
-age_low <- age_low_list[dist_age] 
-age_hi <-  age_hi_list[dist_age] 
+age_low <- age_low_list[dist] 
+age_hi <-  age_hi_list[dist] 
 
 # NAB_min_dist_threshold <- 25
 # age_low <-5  # >= #young kids = 0, school-aged kids = 5, adults = 18
@@ -59,7 +58,7 @@ NAB_tx <- filter(NAB_tx, NAB_station!= "Waco B")
 # this dataset was created in the 'THCIC_assembly.R' script on github: 
 # https://github.com/dankatz/TX_epi/blob/master/THCIC_assembly.R
 
-opa_raw <- read_csv("Z:/THCIC/Katz/op_ip_asthma_2015q4_2020.csv")
+opa_raw <- read_csv("Z:/THCIC/Katz/op_ip_copd_2015q4_2020.csv")
 #opa_raw$PAT_COUNTY <- sprintf("%03s",opa_raw$PAT_COUNTY) %>% sub(" ", "0",.) %>% sub(" ", "0",.)
 opa_raw <- mutate(opa_raw, PAT_COUNTY = sprintf("%03s", PAT_COUNTY), 
                   PAT_COUNTY = sub(" ", "0", PAT_COUNTY),
