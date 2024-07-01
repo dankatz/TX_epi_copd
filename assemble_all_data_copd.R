@@ -10,7 +10,6 @@ library(ggthemes)
 library(scales)
 library(stringr)
 #library(zipcode) #downloaded from the archives, no longer on CRAN
-library(zipcodeR)
 library(sf)
 #library(noncensus) #not available for R 4.0.0 yet
 library(zoo)
@@ -29,7 +28,7 @@ library(daymetr)
 ### start loop to go through all the distance thresholds ##############################
 dist_threshold_list <- rep(c(10, 25, 50), 1)
 age_low_list <- c(40, 40, 40)
-age_hi_list <- c(99, 99, 99)
+age_hi_list <- c(110, 110, 110)
 
 for(dist in 1:3){ #dist <- 1
   print(paste("distance:", dist_threshold_list[dist]))
@@ -106,12 +105,10 @@ opa_raw <- left_join(opa_raw, census_tract_coord) #names(opa_raw) #names(block_g
 #                         distinct()
 # test <- get_acs(state="TX",geography="block group", year = 2016, variables= "B01001_003", geometry=TRUE)
 
-## Using zip code centroids when neither census blocks nor tracts work but a zip code is available (4662 records out of 277232 records)
-data("zipcode") #head(zipcode)
-zipcode2 <- dplyr::select(zipcode, 
-                          zip_pat = zip,
-                          lat_zip = latitude, 
-                          lon_zip = longitude)
+## Using zip code centroids when neither census blocks nor tracts work but a zip code is available (x records out of x records)
+#using the archived version of data from the zipcode package 
+zipcode2 <- read_csv("Z:/THCIC/Katz/zipcode_data.csv")
+
 opa_raw <- left_join(opa_raw, zipcode2) %>% 
   mutate(lon_imp = case_when(!is.na(lon) ~ lon,
                              is.na(lon) & !is.na(lon_tract) ~ lon_tract, #use census tract centroid when block not available
@@ -175,7 +172,7 @@ NAB_dist_opa_join$geometry <- NULL
 
 opa_raw <- left_join(opa_raw, NAB_dist_opa_join) 
 
-### filter asthma ED visits where residence was within X km of an NAB station ###############################################
+### filter copd ED visits where residence was within X km of an NAB station ###############################################
 #NAB_min_dist_threshold <- 25 #moved to top of script
 opa <- opa_raw %>%
   filter(NAB_min_dist < NAB_min_dist_threshold) %>% #restrict cases to patients whose residence was within 25 km of a station
@@ -240,14 +237,14 @@ day_NAB_list <- mutate(day_NAB_list, n_cases = 0, doy = yday(date))
 # age_low <- 0 # >=
 # age_hi <- 4 # <=
 
-#Variables that I want: ages 5-17  #B01001_003
-c_vars_youngkids <- c(paste0("B0100", 1003), #males 0 - 4: 1003; 5 - 17: 1004:1006, 18 +: 1007:1025
-                      paste0("B0100", 1027)) %>%  #females 0 - 4: 1027; 5 - 17: 1028:1030, 18 +: 1031:1049
-  gsub(pattern = "B01001", replacement ="B01001_", x = .) #adding the underscore back in
-c_vars_schoolkids <- c("B01001_004", "B01001_005", "B01001_006", #males from 5-17 years old
-                       "B01001_028", "B01001_029", "B01001_030") #females from 5-17 years old
-c_vars_adults <- c(paste0("B0100", 1007:1025), #males
-                   paste0("B0100", 1031:1049)) %>%  #females
+# #Variables that I want: ages 5-17  #B01001_003
+# c_vars_youngkids <- c(paste0("B0100", 1003), #males 0 - 4: 1003; 5 - 17: 1004:1006, 18 +: 1007:1025
+#                       paste0("B0100", 1027)) %>%  #females 0 - 4: 1027; 5 - 17: 1028:1030, 18 +: 1031:1049
+#   gsub(pattern = "B01001", replacement ="B01001_", x = .) #adding the underscore back in
+# c_vars_schoolkids <- c("B01001_004", "B01001_005", "B01001_006", #males from 5-17 years old
+#                        "B01001_028", "B01001_029", "B01001_030") #females from 5-17 years old
+c_vars_adults <- c(paste0("B0100", 1014:1025), #males 40 and over
+                   paste0("B0100", 1038:1049)) %>%  #females 40 and over
   gsub(pattern = "B01001", replacement ="B01001_", x = .) #adding the underscore back in
 
 #census_All_2017 <- get_acs(state="TX", geography="block group", year = 2017, variables=All_vars, geometry=FALSE) #takes 5 min
@@ -271,15 +268,15 @@ station_looked_up_bg <- left_join(data.frame(n_lookup = which_station_closest_bg
 census_All_2017_sf <- mutate(census_All_2017_sf, NAB_min_dist_bg = distances_bg_min, NAB_station = station_looked_up_bg$NAB_station)
 census_All_2017_sf$geometry <- NULL
 
-pop_near_NAB_young_kids <- census_All_2017_sf %>% filter(NAB_min_dist_bg < NAB_min_dist_threshold) %>%
-  filter(variable %in% c_vars_youngkids) %>%  #only select variables that are population of children between 5 and 17
-  group_by(NAB_station) %>%
-  summarize(young_kids_pop = sum(estimate)) #names(pop_near_NAB)
-
-pop_near_NAB_schoolkids <- census_All_2017_sf %>% filter(NAB_min_dist_bg < NAB_min_dist_threshold) %>%
-  filter(variable %in% c_vars_schoolkids) %>%  #only select variables that are population of children between 5 and 17
-  group_by(NAB_station) %>%
-  summarize(schoolkids_pop = sum(estimate)) #names(pop_near_NAB)
+# pop_near_NAB_young_kids <- census_All_2017_sf %>% filter(NAB_min_dist_bg < NAB_min_dist_threshold) %>%
+#   filter(variable %in% c_vars_youngkids) %>%  #only select variables that are population of children between 5 and 17
+#   group_by(NAB_station) %>%
+#   summarize(young_kids_pop = sum(estimate)) #names(pop_near_NAB)
+# 
+# pop_near_NAB_schoolkids <- census_All_2017_sf %>% filter(NAB_min_dist_bg < NAB_min_dist_threshold) %>%
+#   filter(variable %in% c_vars_schoolkids) %>%  #only select variables that are population of children between 5 and 17
+#   group_by(NAB_station) %>%
+#   summarize(schoolkids_pop = sum(estimate)) #names(pop_near_NAB)
 
 pop_near_NAB_adult <- census_All_2017_sf %>% filter(NAB_min_dist_bg < NAB_min_dist_threshold) %>%
   filter(variable %in% c_vars_adults) %>%  #only select variables that are population of children between 5 and 17
@@ -330,72 +327,6 @@ unique(nrevss_data4$viral_metro_area)
 
 
 
-### adding in school calendars; will need to eventually move this over to data assembly script ###########################
-school <- read_csv("Z:/THCIC/Katz/data_viral/tx_school_calendars_2015_2020_long.csv") %>% 
-  mutate_at(., vars(contains("break_")), mdy)
-
-# #some data vis for QA/QC using the original wide version
-# school %>% 
-#   ggplot(aes(x = summer_break_start, xmin = summer_break_start, xmax = summer_break_end, y = viral_metro_area, color = year )) + geom_pointrange() +
-#   facet_wrap(~year, scales = "free")
-
-#all school_metro_areas x date grid
-#unique(school$school_metro_area)
-study_date_list <- seq(mdy("9-1-2015"),mdy("1-1-2021"), by = "days")
-school_metro_date_grid <- expand.grid(date = study_date_list, school_metro_area = unique(school$school_metro_area))
-
-#having a hard time doing this within groups, so I'm running it separately for each metro area
-school_metro_areas <- unique(school$school_metro_area)
-
-for(i in 1:length(school_metro_areas)){
-  focal_metro <- school_metro_areas[i]  #focal_metro <- school_metro_areas[1]
-  
-  school_breaks <- school %>% 
-    filter(school_metro_area == focal_metro) %>% 
-    transmute(sbreaks = interval(break_start, break_end))  %>% 
-    as.list() 
-  
-  date_df <- school_metro_date_grid %>% 
-    filter(school_metro_area == focal_metro)
-  
-  output_metro <- date_df %>% 
-    rowwise() %>% 
-    mutate(on_break_raw = any(date %within% school_breaks),
-           on_break = case_when(on_break_raw == TRUE ~ 1,
-                                on_break_raw == FALSE ~ 0)) #any(date_df$date[70] %within% school_breaks)
-  
-  if(i == 1){all_metros <- output_metro}else{all_metros <- bind_rows(all_metros, output_metro)}
-}
-
-# #visual check
-# all_metros %>% ungroup() %>% 
-#   filter(date < mdy("10/1/16")) %>% 
-# ggplot(aes(x = date, y = on_break )) + geom_line() + facet_wrap(~viral_metro_area)
-
-#creating a few derived variables including days since summer and winter breaks (possible effect times are roughly based on calendars and Eggo's paper)
-school_breaks_join <- 
-  all_metros %>% ungroup() %>% 
-  dplyr::select(-on_break_raw) %>% 
-  mutate(last_date_on_holiday = case_when(date == mdy("10/1/2015") ~ mdy("8/25/2015"),
-                                          on_break == 1 ~ date)) %>% 
-  fill(last_date_on_holiday) %>% 
-  mutate(days_since_holiday = as.numeric(date - last_date_on_holiday),
-         doy = yday(date),
-         days_since_win_break = case_when(doy < 28 ~ days_since_holiday,
-                                          doy >= 28 ~ 28),
-         days_since_win_break = case_when(days_since_win_break == 0 ~ 29, TRUE ~ days_since_win_break),
-         days_since_sum_break = case_when(doy > 213  & doy < 274 ~ days_since_holiday,
-                                          TRUE ~ 28),
-         days_since_sum_break = case_when(days_since_sum_break == 0 ~ 29,
-                                          days_since_sum_break > 28 ~ 28, TRUE ~ days_since_sum_break)) %>% 
-  dplyr::select(-doy, -last_date_on_holiday) %>% 
-  distinct() #getting rid of duplicates caused by multiple cities being in the same viral metro area
-
-
-#test2 <- school_breaks_join  %>% dplyr::select(school_metro_area, date) %>% count( school_metro_area, date)
-
-
-
 
 ### combine the various datasets ######################################################################
 opa_day <- opa %>% group_by(date, NAB_station) %>% #names(opa) opa$PAT_AGE_YEARS
@@ -408,8 +339,6 @@ opa_day <- opa_day %>% group_by(date, NAB_station, doy) %>%
   summarize(n_cases = sum(n_cases)) #add up n_cases from each day
 
 opa_day <- left_join(opa_day, NAB_tx)
-opa_day <- left_join(opa_day, pop_near_NAB_young_kids)
-opa_day <- left_join(opa_day, pop_near_NAB_schoolkids)
 opa_day <- left_join(opa_day, pop_near_NAB_adult)
 
 opa_day <- opa_day %>%  #unique(opa_day$City)
@@ -435,19 +364,6 @@ opa_day <- opa_day %>% ungroup() %>% group_by(NAB_station) %>% arrange(NAB_stati
                                          "Saturday", "Sunday"))  %>% filter(date > mdy('9-30-15')) 
 
 
-opa_day <- opa_day  %>% 
-  mutate(school_metro_area = case_when(NAB_station == "San Antonio A" ~ "San Antonio", #this part needs to be before school section
-                                       NAB_station == "San Antonio B" ~ "San Antonio",
-                                       NAB_station == "Waco A" ~ "Waco",
-                                       TRUE ~ NAB_station)) %>% 
-  left_join(., school_breaks_join) 
-
-
-# #for children
-# opa_day <- mutate(opa_day, pbir = ((n_cases/children_pop) * 10000), #PIBR per 10,000 for children
-#                            pbir_py = (pbir / ((children_pop))) * 100000)
-# write_csv(opa_day, "C:/Users/dsk856/Desktop/thcic_analysis/opa_day_child_50km_200918.csv")
-# 
 # #for adults
 # opa_day_adult <- mutate(opa_day, pbir = ((n_cases/adult_pop) * 10000), #PIBR per 10,000 for children
 #                   pbir_py = (pbir / ((adult_pop))) * 100000)
@@ -456,15 +372,15 @@ opa_day <- opa_day  %>%
 
 #making sure the population is set for the correct age group. 
 #WARNING: BE CAUTIOUS IF NOT USING THE EXACT AGEGROUPS
-if(age_hi < 6){opa_day_agegroup_x <- mutate(opa_day, agegroup_x_pop = young_kids_pop)} #PIBR per 1,000,000 
-if(age_hi == 17){opa_day_agegroup_x <- mutate(opa_day, agegroup_x_pop = schoolkids_pop)} #PIBR per 1,000,000 
+# if(age_hi < 6){opa_day_agegroup_x <- mutate(opa_day, agegroup_x_pop = young_kids_pop)} #PIBR per 1,000,000 
+# if(age_hi == 17){opa_day_agegroup_x <- mutate(opa_day, agegroup_x_pop = schoolkids_pop)} #PIBR per 1,000,000 
 if(age_hi > 90){opa_day_agegroup_x <- mutate(opa_day, agegroup_x_pop = adult_pop)} #PIBR per 1,000,000 
 
 opa_day_agegroup_x <- opa_day_agegroup_x %>% mutate(pbir =  (n_cases/agegroup_x_pop) * 1000000)
 
 
 csv_file_name <- paste0("Z:/THCIC/Katz/",
-                        "opa_day_ages_",age_low,"_",age_hi,"_dist_", NAB_min_dist_threshold, "_",Sys.Date(),".csv")
+                        "opa_day_copd_ages_",age_low,"_",age_hi,"_dist_", NAB_min_dist_threshold, "_",Sys.Date(),".csv")
 write_csv(opa_day_agegroup_x, csv_file_name)
 
 #summary(opa_day_agegroup_x)
