@@ -21,6 +21,9 @@ library(imputeTS)
 library(daymetr)
 
 
+#note: will need to do a final extraction of numbers of cases where census block is missing and zipcode is used
+# need to also decide for sure about whether 40 is a good cut off point
+
 #rm(list = ls())
 
 #removing Waco B because of data quality issues
@@ -186,7 +189,7 @@ opa <- opa_raw %>%
                                                               NAB_station == "San Antonio B" ~ "San Antonio",
                                                               NAB_station == "Waco A" ~ "Waco",
                                                               TRUE ~ NAB_station))
-# opa %>% #sample_frac(0.1) %>%
+# opa %>% sample_frac(0.1) %>%
 # ggplot(aes(x= lon_imp, y = lat_imp, color = NAB_station)) + geom_point(alpha = 0.03) + theme_bw() + xlab("longitude") + ylab("latitude") +
 #   guides(color = guide_legend(override.aes = list(alpha =1)))
 
@@ -268,15 +271,6 @@ station_looked_up_bg <- left_join(data.frame(n_lookup = which_station_closest_bg
 census_All_2017_sf <- mutate(census_All_2017_sf, NAB_min_dist_bg = distances_bg_min, NAB_station = station_looked_up_bg$NAB_station)
 census_All_2017_sf$geometry <- NULL
 
-# pop_near_NAB_young_kids <- census_All_2017_sf %>% filter(NAB_min_dist_bg < NAB_min_dist_threshold) %>%
-#   filter(variable %in% c_vars_youngkids) %>%  #only select variables that are population of children between 5 and 17
-#   group_by(NAB_station) %>%
-#   summarize(young_kids_pop = sum(estimate)) #names(pop_near_NAB)
-# 
-# pop_near_NAB_schoolkids <- census_All_2017_sf %>% filter(NAB_min_dist_bg < NAB_min_dist_threshold) %>%
-#   filter(variable %in% c_vars_schoolkids) %>%  #only select variables that are population of children between 5 and 17
-#   group_by(NAB_station) %>%
-#   summarize(schoolkids_pop = sum(estimate)) #names(pop_near_NAB)
 
 pop_near_NAB_adult <- census_All_2017_sf %>% filter(NAB_min_dist_bg < NAB_min_dist_threshold) %>%
   filter(variable %in% c_vars_adults) %>%  #only select variables that are population of children between 5 and 17

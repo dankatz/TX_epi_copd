@@ -62,6 +62,25 @@ op_data_2018_2020$PAT_ADDR_CENSUS_BLOCK_GROUP <- stringi::stri_pad_right(op_data
 write_csv(op_data_2018_2020, "Z:/THCIC/Outpatient THCIC data 2018-2020/OPTexasCOPD18_20_enc_date.csv")
 #op_data_2018_2020 <- read_csv("Z:/THCIC/Outpatient THCIC data 2018-2020/OPTexasCOPD18_20_enc_date.csv")
 
+#PICK UP HERE NEXT TIME:
+#WHY IS 2018 23K CASES INSTEAD OF 50-60K??
+#looks like the op2018 file only has cases until the end of june?? need to dig deeper into why this is happening
+#need to check raw data here: Z:\THCIC\Outpatient THCIC data 2018-2020
+#first thought: it looks like I used files from the 'Filtered Data' folder, perhaps there was an error in the processing that was done?
+#
+op_data_2018_2020 %>% 
+  mutate(date_s = ymd(STMT_PERIOD_FROM),
+         year_s = year(date_s)) %>% 
+  group_by(as.character(year_s)) %>% 
+  summarize(n = n())
+
+
+op2019%>% 
+  mutate(date_s = ymd(STMT_PERIOD_FROM),
+         year_s = year(date_s)) %>% 
+  group_by(as.character(year_s)) %>% 
+  summarize(n = n())
+
 
 
 
@@ -263,3 +282,23 @@ op_ip_copd_2015q4_2020 <- bind_rows(op_copd_2015q4_2020_join, ip_copd_2015q4_202
 write_csv(op_ip_copd_2015q4_2020, "Z:/THCIC/Katz/op_ip_copd_2015q4_2020.csv")
 
 #sort(names(test))
+
+
+#visual test on number of cases over time
+op_ip_copd_2015q4_2020 <- read_csv("Z:/THCIC/Katz/op_ip_copd_2015q4_2020.csv")
+names(op_ip_copd_2015q4_2020)
+str(op_ip_copd_2015q4_2020$STMT_PERIOD_FROM)
+summary(op_ip_copd_2015q4_2020$STMT_PERIOD_FROM)
+
+
+op_ip_copd_2015q4_2020 %>% 
+  mutate(date_s = ymd(STMT_PERIOD_FROM),
+         date_s2 = ymd(ADMIT_START_OF_CARE),
+         year_s = year(date_s),
+         year_s2 = year(date_s2)) %>% 
+  mutate(year_s3 = case_when(is.na(year_s2) ~ year_s,
+                             is.na(year_s) ~ year_s2,
+                            FALSE ~ 99)) %>% 
+  
+  group_by(as.character(year_s3)) %>% 
+  summarize(n = n())
