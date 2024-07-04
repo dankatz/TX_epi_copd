@@ -23,8 +23,6 @@ library(cowplot)
 #the standard distance is 25 km; sensitivity analyses for 10 and 50 km
 
 #10 km sensitivity analysis
-# opa_day_youngchildren <- read_csv("Z:/THCIC/Katz/opa_day_ages_0_4_dist_10_2022-12-21.csv", guess_max = 8260)
-# opa_day_schoolchildren <- read_csv("Z:/THCIC/Katz/opa_day_ages_5_17_dist_10_2022-12-21.csv", guess_max = 8260)
 # opa_day_adult <- read_csv("Z:/THCIC/Katz/opa_day_ages_18_99_dist_10_2022-12-21.csv", guess_max = 8260)
 
 #25 km main analysis
@@ -32,10 +30,7 @@ opa_day_adult <- read_csv("Z:/THCIC/Katz/opa_day_copd_ages_40_110_dist_25_2024-0
 #sum(opa_day_youngchildren$n_cases) +sum(opa_day_schoolchildren$n_cases) + sum(opa_day_adult$n_cases)
 
 #50 km sensitivity analysis
-# opa_day_youngchildren <- read_csv("Z:/THCIC/Katz/opa_day_ages_0_4_dist_50_2022-12-21.csv", guess_max = 8260)
-# opa_day_schoolchildren <- read_csv("Z:/THCIC/Katz/opa_day_ages_5_17_dist_50_2022-12-21.csv", guess_max = 8260)
 # opa_day_adult <- read_csv("Z:/THCIC/Katz/opa_day_ages_18_99_dist_50_2022-12-21.csv", guess_max = 8260)
-# 
 
 ### table 1: summary of AREDV by site #########################################################
 
@@ -51,46 +46,11 @@ opa_day_adult %>%
   summarize(adult_pop_sum = sum(adult_pop))
 
 ### fig 1: time series of each var ############################################################
-#names(opa_day_schoolchildren)
 
-#time series for ED visits: young children
-# pbir_global_mean_youngchild <- opa_day_youngchildren %>% #the average across all the study areas
-#   group_by(date) %>%
-#   summarize(pbir_global_mean = mean(pbir))
 
 #for creating vertical date lines in the fig
 date_lines_df <- data.frame(date = c(ymd("2016-01-01"), ymd("2017-01-01"), ymd("2018-01-01"), 
                                      ymd("2019-01-01"), ymd("2020-01-01"), ymd("2021-01-01")))
-# panel_ed_youngchild <-
-#   opa_day_youngchildren %>%
-#   ggplot(aes(x = date, y = pbir, col = NAB_station)) + theme_few() +
-#   geom_line(aes(x = date, y=rollmean((pbir ), 7, na.pad=TRUE)), alpha = 0.3) +
-#   geom_line(data = pbir_global_mean_youngchild, aes(x = date, y = rollmean(pbir_global_mean, 7, na.pad=TRUE)), col = "black") +
-#   coord_cartesian(ylim = c(0, 70)) +  
-#   scale_color_grey(name = "NAB station") +
-#   ylab("Asthma ED \n visits \n (per 1,000,000)") +
-#   theme(strip.text.x = element_blank(),
-#         strip.background = element_rect(colour="white", fill="white"),
-#         legend.position= "none",
-#         axis.title.x=element_blank(), axis.text.x=element_blank()) +
-#   geom_vline(data = date_lines_df, aes(xintercept = date), col = "blue", alpha = 0.25)
-# 
-# 
-# #time series for ED visits: school aged children
-# pbir_global_mean <- opa_day_schoolchildren %>% #the average across all the study areas
-#   group_by(date) %>%
-#   summarize(pbir_global_mean = mean(pbir))
-# panel_ed <-
-#   opa_day_schoolchildren %>%
-#   ggplot(aes(x = date, y = pbir, col = NAB_station)) + theme_few() +
-#   geom_line(aes(x = date, y=rollmean((pbir ), 7, na.pad=TRUE)), alpha = 0.3) +
-#   geom_line(data = pbir_global_mean, aes(x = date, y = rollmean(pbir_global_mean, 7, na.pad=TRUE)), col = "black") +
-#   coord_cartesian(ylim = c(0, 55)) +  scale_color_grey() +
-#   ylab("Asthma ED \n visits \n (per 1,000,000)") +
-#   theme(strip.text.x = element_blank(),
-#         strip.background = element_rect(colour="white", fill="white"),
-#         legend.position= "none",axis.title.x=element_blank(), axis.text.x=element_blank())+
-#   geom_vline(data = date_lines_df, aes(xintercept = date), col = "blue", alpha = 0.25)
 
 #time series for ED visits: adults
 pbir_global_mean_adult <- opa_day_adult %>% #the average across all the study areas
@@ -178,178 +138,94 @@ ts_panels <- cowplot::plot_grid(#panel_ed_youngchild, panel_ed,
                                 label_size = 11,
                                 label_x = 0.17, label_y = 0.8,
                                 hjust = 0, vjust = 0)
-ggsave(file = "Z:/THCIC/Katz/copd_results/time_series_fig_240701.jpg", plot = ts_panels,
+ggsave(file = "Z:/THCIC/Katz/copd_results/time_series_fig_240704.jpg", plot = ts_panels,
        height = 24, width = 18, units = "cm", dpi = 300)
 
 
 
-# opa_day_schoolchildren %>% 
-#   filter(NAB_station == "San Antonio A" |NAB_station == "San Antonio B") %>% 
-#   group_by(NAB_station) %>% 
-#   summarize(Cupressaceae_mean = mean(Cupressaceae, na.rm = TRUE))
-
-# 
-# 
+# #some data exploration
 # #comparing pollen to ED visits for asthma over time
 # names(opa_day)
 # panel_a <- opa_day %>%
 # filter(date > ymd("2015 - 11 - 01")) %>%
 # filter(NAB_station == "San Antonio A") %>%
-#   ggplot(aes(x = date, y = n_cases)) + theme_few() +  
+#   ggplot(aes(x = date, y = n_cases)) + theme_few() +
 #   geom_point(alpha = 0.2)  +  ylab("number of asthma ED visits") + # ylab("PBIR (asthma ED visits per 10,000 residents)") + #+ geom_smooth(method = "lm", se = FALSE, color = "gray")
 #   xlab("") + #scale_color_viridis_c(name = "pollen grains per m3") +
 #   geom_line(aes(x = date, y=rollmean(n_cases, 7, na.pad=TRUE)), color = "black")
-# panel_b <- opa_day %>% 
+# panel_b <- opa_day %>%
 #   filter(date > ymd("2015 - 11 - 01")) %>%
 #   filter(NAB_station == "San Antonio A") %>%
-#   ggplot(aes(x = date, y = log(ja + 1))) + theme_few() +  #scale_x_log10() + 
+#   ggplot(aes(x = date, y = log(Cupressaceae + 1))) + theme_few() +  #scale_x_log10() +
 #   geom_point(alpha = 0.2)  +  ylab("log(pollen grains/m3)") + # ylab("PBIR (asthma ED visits per 10,000 residents)") + #+ geom_smooth(method = "lm", se = FALSE, color = "gray")
 #   xlab("") + #scale_color_viridis_c(name = "pollen grains per m3") +
-#   geom_line(aes(x = date, y=rollmean(log(ja + 1), 7, na.pad=TRUE)), color = "black")
-# panel_c <- opa_day %>% 
+#   geom_line(aes(x = date, y=rollmean(log(Cupressaceae + 1), 7, na.pad=TRUE)), color = "black")
+# panel_c <- opa_day %>%
 #   filter(date > ymd("2015 - 11 - 01")) %>%
 #   filter(NAB_station == "San Antonio A") %>%
-#   ggplot(aes(x = date, y = log(cup_other_rfint_log_mean + 1))) + theme_few() +  #scale_x_log10() + 
+#   ggplot(aes(x = date, y = log(cup_log10 + 1))) + theme_few() +  #scale_x_log10() +
 #   geom_point(alpha = 0.2)  +  ylab("log(pollen grains/m3)") + # ylab("PBIR (asthma ED visits per 10,000 residents)") + #+ geom_smooth(method = "lm", se = FALSE, color = "gray")
 #   xlab("") + #scale_color_viridis_c(name = "pollen grains per m3") +
-#   geom_line(aes(x = date, y=rollmean(log(cup_other_rfint_log_mean + 1), 7, na.pad=TRUE)), color = "black")
-# panel_d <- opa_day %>% 
+#   geom_line(aes(x = date, y=rollmean(log(cup_log10 + 1), 7, na.pad=TRUE)), color = "black")
+# panel_d <- opa_day %>%
 #   filter(date > ymd("2015 - 11 - 01")) %>%
 #   filter(NAB_station == "San Antonio A") %>%
-#   ggplot(aes(x = date, y = log(trees + 1))) + theme_few() +  #scale_x_log10() + 
+#   ggplot(aes(x = date, y = log(trees + 1))) + theme_few() +  #scale_x_log10() +
 #   geom_point(alpha = 0.2)  +  ylab("log(pollen grains/m3)") + # ylab("PBIR (asthma ED visits per 10,000 residents)") + #+ geom_smooth(method = "lm", se = FALSE, color = "gray")
 #   xlab("") + #scale_color_viridis_c(name = "pollen grains per m3") +
 #   geom_line(aes(x = date, y=rollmean(log(trees + 1), 7, na.pad=TRUE)), color = "black")
-# panel_e <- opa_day %>% 
+# panel_e <- opa_day %>%
 #   filter(date > ymd("2015 - 11 - 01")) %>%
 #   filter(NAB_station == "San Antonio A") %>%
-#   ggplot(aes(x = date, y = log(pol_other + 1))) + theme_few() +  #scale_x_log10() + 
+#   ggplot(aes(x = date, y = log(pol_other + 1))) + theme_few() +  #scale_x_log10() +
 #   geom_point(alpha = 0.2)  +  ylab("log(pollen grains/m3)") + # ylab("PBIR (asthma ED visits per 10,000 residents)") + #+ geom_smooth(method = "lm", se = FALSE, color = "gray")
 #   xlab("") + #scale_color_viridis_c(name = "pollen grains per m3") +
 #   geom_line(aes(x = date, y=rollmean(log(pol_other + 1), 7, na.pad=TRUE)), color = "black")
 # 
-# cowplot::plot_grid(panel_a, panel_b, panel_c, panel_d, panel_e, nrow = 5, 
+# cowplot::plot_grid(panel_a, panel_b, panel_c, panel_d, panel_e, nrow = 5,
 #                    labels = c("ED visits", "J. ashei", "other Cupressaceae", "trees", "other pollen"))
 # 
-#   
 #   opa_day %>%
 #     filter(date > ymd("2015 - 11 - 01")) %>%
 #     filter(NAB_station == "Houston" | NAB_station == "Dallas" | NAB_station == "San Antonio A") %>%
-#     ggplot(aes(x = date, y = n_cases, color = v_tests_pos_RSV )) + theme_few() +  facet_wrap(~NAB_station, scale = "free_y", ncol = 1) + #scale_x_log10() + 
+#     ggplot(aes(x = date, y = n_cases, color = v_pos_prop_rhino_m  )) + theme_few() +  facet_wrap(~NAB_station, scale = "free_y", ncol = 1) + #scale_x_log10() +
 #     geom_point()  +  ylab("number of asthma ED visits") + # ylab("PBIR (asthma ED visits per 10,000 residents)") + #+ geom_smooth(method = "lm", se = FALSE, color = "gray")
 #     xlab("") + scale_color_viridis_c() +
 #     geom_line(aes(x = date, y=rollmean(n_cases, 7, na.pad=TRUE)), color = "black")
-#   
-#   opa_day %>%
-#     filter(date > ymd("2015 - 11 - 01")) %>%
-#     filter(NAB_station == "Georgetown" ) %>%
-#     ggplot(aes(x = date, y = tot_pol +1 )) + theme_bw() +  #facet_wrap(~NAB_station, scale = "free_y", ncol = 1) + #scale_x_log10() + 
-#     geom_point()  +  ylab("airborne pollen (grains/m3)") + # ylab("PBIR (asthma ED visits per 10,000 residents)") + #+ geom_smooth(method = "lm", se = FALSE, color = "gray")
-#     xlab("") + #+ scale_color_viridis_c(name = "max temp (C)") +
-#     #geom_line(aes(x = date, y= tot_pol_m7 + 1)) +
-#     scale_x_date(breaks = pretty_breaks(15)) +
-#     scale_y_log10()
-#   
+# 
+# 
+# 
 #   opa_day %>%
 #     filter(date > ymd("2015 - 11 - 01")) %>%
 #     filter(NAB_station == "Houston" | NAB_station == "Dallas" | NAB_station == "San Antonio A") %>%
-#     ggplot(aes(x = date, y = met_tmaxdegc )) + theme_few() +  facet_wrap(~NAB_station, scale = "free_y", ncol = 1) + #scale_x_log10() + 
-#     #geom_point()  +  
+#     ggplot(aes(x = date, y = met_tmaxdegc )) + theme_few() +  facet_wrap(~NAB_station, scale = "free_y", ncol = 1) + #scale_x_log10() +
+#     #geom_point()  +
 #     ylab("temperature (C)") + # ylab("PBIR (asthma ED visits per 10,000 residents)") + #+ geom_smooth(method = "lm", se = FALSE, color = "gray")
-#     #xlab("") + 
-#     geom_line(aes(x = date, y=rollmean(n_cases, 3, na.pad=TRUE), col = log10(tot_pol + 1)), lwd = 2) +
+#     #xlab("") +
+#     geom_line(aes(x = date, y=rollmean(n_cases, 3, na.pad=TRUE), col = log10(pol_other_m  + 1)), lwd = 2) +
 #     geom_line(aes(x = date, y=rollmean(met_tmaxdegc, 7, na.pad=TRUE)), color = "red") +
 #      scale_y_continuous("ED visits", sec.axis = sec_axis(~ . , name = "temperature")) +
 #     theme(      axis.title.y.right = element_text(color = "red")) +
 #     scale_color_viridis_c()
-#   
-# opa_day %>%
-#   ggplot(aes(y = tot_pol, x = met_tmaxdegc, col = doy)) + theme_few() +  facet_wrap(~NAB_station) + scale_y_log10() +  #facet_wrap(~year, ncol = 1) + #
-#   geom_point() + xlab("maximum temp (C)") + ylab("pollen grains per m3") + #geom_smooth(method = "lm", se = FALSE)  + 
-#   scale_color_viridis_c(name = "day of year")#ylab("PBIR (asthma ED visits per 10,000 residents)")  
-#   
+# 
+# 
 # opa_day %>% ungroup() %>%
-#   filter(NAB_station == "San Antonio A" | NAB_station == "Dallas" | NAB_station == "Houston") %>%
+#  # filter(NAB_station ==  "Austin" |NAB_station =="San Antonio B" |NAB_station == "San Antonio A" | NAB_station == "Dallas" | NAB_station == "Houston") %>%
 #   filter(date > ymd("2015-11-01")) %>%
-#   filter(year == 2016) %>%
-#   ggplot(aes(x = date, y = tot_pol_stan )) + theme_bw() +  facet_wrap(~NAB_station, ncol = 1) +#+ facet_wrap(~year, ncol = 1) + #+ scale_y_log10() + 
-#   geom_line(aes(x = date , y=rollmean(log10(tot_pol + 1) * 25, 7, na.pad=TRUE)), color = "blue") +
-#   geom_line(aes(x = date , y=rollmean(v_tests_pos_Rhinovirus * 0.3, 7, na.pad=TRUE)), color = "green") +
-#   geom_line(aes(x = date, y=rollmean(pbir * 175, 7, na.pad=TRUE)), color = "red") +
+#   filter(year == 2020) %>%
+#   ggplot(aes(x = date, y = pol_other_m)) + theme_bw() +  facet_wrap(~NAB_station, ncol = 1) +#+ facet_wrap(~year, ncol = 1) + #+ scale_y_log10() +
+#   geom_line(aes(x = date , y=rollmean(pol_other_m  * 0.1, 7, na.pad=TRUE)), color = "blue") +
+#   geom_line(aes(x = date , y=rollmean(trees_m  * 0.05, 7, na.pad=TRUE)), color = "brown") +
+#   geom_line(aes(x = date , y=rollmean(cup_all_m  * 0.05, 7, na.pad=TRUE)), color = "black") +
+#   geom_line(aes(x = date , y=rollmean(v_pos_prop_rhino_m14  * 200, 7, na.pad=TRUE)), color = "green") +
+#   geom_line(aes(x = date , y=rollmean(v_pos_prop_flu_m14  * 200, 7, na.pad=TRUE)), color = "darkgreen") +
+#   geom_line(aes(x = date , y=rollmean(v_pos_prop_RSV_m14  * 200, 7, na.pad=TRUE)), color = "orange") +
+#   geom_line(aes(x = date , y=rollmean(v_pos_prop_corona_m14  * 200, 7, na.pad=TRUE)), color = "purple") +
+#   geom_line(aes(x = date, y=rollmean(pbir * 4, 7, na.pad=TRUE)), color = "red") +
 #   coord_cartesian(ylim = c(0, 100)) +
 #   scale_x_date(breaks = pretty_breaks(30)) +
 #   ylab("variable scaled to 100")
-# #ylab("PBIR (asthma ED visits per 10,000 residents)")  
-# 
-# test <- filter(opa_day, MSA == "San Antonio-New Braunfels")
-# ccf(test$hits_day_adj_pollen, test$tot_pol)
-# ccf(test$hits_day_adj_pollen, test$pbir_child)
-# 
-# opa_day %>% ungroup() %>% #unique(opa_day$NAB_station)
-#   filter(date > ymd("2015-11-01")) %>%
-#   #filter(year == 2017) %>%
-#   #filter(NAB_station == "San Antonio B" | NAB_station == "San Antonio A" ) %>%
-#   #filter(NAB_station == "Waco B" | NAB_station == "Waco A" ) %>%
-#   filter(NAB_station == "Dallas" | NAB_station == "Flower Mound" ) %>%
-#   #filter(NAB_station == "Houston" | NAB_station == "Dallas" | NAB_station == "San Antonio A" | NAB_station == "Georgetown") %>%
-#   #filter(NAB_station == "Flower Mound" | NAB_station == "San Antonio B" | NAB_station == "San Antonio A" | NAB_station == "Georgetown") %>%
-#   ggplot(aes(x = date, y = pbir * 500 , col = log10(tot_pol+ 1) )) + theme_bw() +  facet_wrap(~NAB_station, ncol = 1) +
-#   scale_color_viridis_c() +
-#   #geom_line( lwd = 2) + 
-#   geom_line(aes(x = date - 10, y=rollmean(pbir * 1000, 7, na.pad=TRUE)), color = "red", lwd = 2) + 
-#   geom_point(aes(x = date, y = 50 * log(tot_pol + 1)))+
-#   geom_line(aes(x = date, y = v_tests_pos_Adenovirus), color = "pink")+
-#   geom_line(aes(x = date, y = v_tests_pos_HMPV), color = "pink")+
-#   geom_line(aes(x = date, y = v_tests_pos_Corona), color = "green")+
-#   geom_line(aes(x = date, y = v_tests_pos_Rhinovirus), color = "blue")+
-#   geom_line(aes(x = date, y = v_tests_pos_RSV), color = "goldenrod")+
-#   geom_line(aes(x = date, y = v_tests_pos_Parainfluenza), color = "pink") 
-#   
-# opa_day %>%
-# filter(NAB_station == "Dallas") %>%
-# #filter(year == 2016) %>%
-# ggplot(aes(x = date, y = pbir, col = (tot_pol + 1))) + geom_point(size = 2) + theme_bw() + 
-#   scale_color_viridis_c(trans = "log10", name = "total pollen (g/m3)") +
-#   scale_x_date(breaks = pretty_breaks(20)) + ylab("PBIR (Asthma ED visits per 10,000 residents)") +#scale_y_log10()  + 
-#   geom_line(aes(x = date, y=rollmean(pbir, 14, na.pad=TRUE)), color = "red") 
-#   #geom_line(aes(x = date, y=rollmean(log10(tot_pol + 1)/10, 3, na.pad=TRUE)), color = "blue") 
-# 
-# 
-# # #overlap between San Antonio datasets?
-# # filter(NAB_tx, county_name == "Bexar") %>%
-# #   ggplot(aes(x = date, y = Cupressaceae, color = file)) + geom_point() + facet_wrap(~file, ncol = 1)
-# # 
-# # filter(NAB_tx, county_name == "Bexar") %>% 
-# #   dplyr::select(date, file, Cupressaceae) %>%
-# #   pivot_wider(names_from = file, values_from = Cupressaceae) %>%
-# #   setNames(., c("date", "San_198", "San_219")) %>%
-# #   ggplot(aes(x= San_198 + 1, y = San_219 + 1)) + geom_point() + theme_few() + scale_x_log10() + scale_y_log10() + geom_abline(slope = 1, lty = 2) + 
-# #   xlab("Station 198 (pollen grains/m3)") + ylab("Station 219 (pollen grains/m3)") #+ geom_smooth(method = "lm")
-# # 
-# # filter(NAB_tx, county_name == "McLennan") %>% 
-# #   dplyr::select(date, file, Cupressaceae) %>%
-# #   pivot_wider(names_from = file, values_from = Cupressaceae) %>%
-# #   setNames(., c("date", "Waco_105", "Waco_106")) %>%
-# #   mutate(doy = yday(date)) %>%
-# #   ggplot(aes(x= Waco_105 + 1, y = Waco_106 + 1, color = doy)) + geom_point() + theme_few() + scale_x_log10() + scale_y_log10() + geom_abline(slope = 1, lty = 2) + 
-# #   xlab("Station 105 (pollen grains/m3)") + ylab("Station 106 (pollen grains/m3)") #+ geom_smooth(method = "lm")
-# # 
-# # 
-# # NAB_tx %>% mutate(doy = yday(date),
-# #                   year = year(date)) %>%
-# #   ggplot(aes(x= doy, y = Cupressaceae + 1, color = year)) + geom_point(alpha = 0.5) + geom_line(aes(y=rollmean((Cupressaceae + 1), 14, na.pad=TRUE))) +
-# #   facet_wrap(~file) + scale_y_log10() + 
-# #   scale_color_viridis_c() + theme_few() 
-# 
-# filter(opa_day, county_name == "Dallas") %>% #, 
-#      #  doy > 350 | doy < 50) %>%
-# ggplot(aes(x = date, y = pbir_child, color = gtrend_common_cold)) + geom_point(alpha = 0.9, size = 2) + theme_few() +
-#   #ylab("asthma-related ED visits per 100,000 person years in Travis County") +
-#   ylab("asthma-related ED visits per 10,000 people per day") + 
-#   #ylab("rhino virus modeled incidence") + 
-#   scale_color_viridis_c() + #limits = c(0, 150) name = "var"
-#   scale_x_date(breaks = scales::pretty_breaks(n = 20)) + #, limits = as.Date(c('2016-02-14','2016-05-01'))) +
-#   geom_line(aes(x = date, y=rollmean(pbir_child, 14, na.pad=TRUE, color = "gray")), inherit.aes = FALSE)
+# #ylab("PBIR (asthma ED visits per 10,000 residents)")
 
 
 
@@ -370,12 +246,8 @@ fqaic <- function(model) {
   return(qaic)
 }
 
-#opa_day <- opa_day_youngchildren
-#opa_day <- opa_day_schoolchildren
-opa_day <- opa_day_adult
+opa_day <- opa_day_adult #a hold over from age stratified analyses
 
-age_low <- 40 #0, 5, 18
-age_hi <- 99 #4, 17, 99
 
 #mean PBIR for focal age group
 opa_day %>% #group_by(NAB_station) %>% 
@@ -387,10 +259,6 @@ opa_day %>% #group_by(NAB_station) %>%
 
 
 ## prepare data for model ============================================================
-# ggplot(opa_day, aes( x = date, y = trees + 1))  + facet_wrap(~NAB_station) + theme_bw()+ scale_y_log10() + 
-#   geom_point(color = "black") +
-#   geom_point(aes(x = date, y = trees_m2 + 1), color = "red", size = 0.5) 
-
 
 #names(opa_day)
 #unique(opa_day$NAB_station)
@@ -417,7 +285,7 @@ data_for_model <- opa_day %>%
   dplyr::select(NAB_station, date, n_cases, pbir, 
                 agegroup_x_pop, log_agegroup_x_pop, #child_pop, log_child_pop, adult_pop, log_adult_pop, 
                 week_day, 
-                on_break, days_since_holiday, days_since_win_break, days_since_sum_break,
+                #on_break, days_since_holiday, days_since_win_break, days_since_sum_break,
                 #cup_other_lm, #cup_other_lms, 
                 #Cupressaceae,  trees, pol_other,
                 #cup_all_lm,  trees_lm, pol_other_lm,
@@ -461,19 +329,8 @@ data_for_model <- opa_day %>%
   mutate(    doy = yday(date),
              months = month(date),
              years = year(date))  %>% 
-  ungroup() %>% 
-  mutate(school_first_day_fall = case_when(days_since_sum_break == 1 ~ 1,
-                                           TRUE ~ 0),
-         school_first_day_winter = case_when(days_since_win_break == 1 ~ 1,
-                                             TRUE ~ 0),
-         break_lag = lag(on_break),
-         break_transition = on_break - break_lag,
-         school_first_day_winter_break = case_when(break_transition == 1 & doy > 350 ~ 1,
-                                                   TRUE ~ 0),
-         school_first_day_summer_break = case_when(break_transition == 1 & doy > 150 & doy < 180 ~ 1,
-                                                   TRUE ~ 0)
-  ) %>% 
-  dplyr::select(-break_lag, -break_transition, -days_since_holiday, -days_since_win_break, -days_since_sum_break)
+  ungroup()
+  
 
 
 #data_for_model_noNA <- data_for_model %>% filter(complete.cases(.))
@@ -520,8 +377,8 @@ data_for_model %>% group_by(NAB_station, date) %>%
 # shape_response <- 3
 # shape_lag <- 3
 max_lag <- 7
-knots_response_df <- 2 #response shape young kids: 2 school kids: 3 adults: 3
-knots_lag_df <- 2 #lag shape young kids: 2, school kids: 2, adults: 2
+knots_response_df <- 3 #response shape 
+knots_lag_df <- 3 #lag shape 
 
 cup_knots_response <- equalknots(data_for_model$cup_all_m2, fun="ns", df=knots_response_df)
 cup_knots_lag <- equalknots(0:max_lag, fun="ns", df=knots_lag_df)
@@ -547,59 +404,33 @@ pol_other_lag <- crossbasis(data_for_model$pol_other_m2, lag = max_lag,
 
 
 #viruses in dlnm format for use with attrdl function for AR
-rhino_lag <- crossbasis(data_for_model$v_pos_prop_rhino_m21, lag = 0, #percent of tests positive for rhinovirus
+rhino_lag <- crossbasis(data_for_model$v_pos_prop_rhino_m14, lag = 0, #percent of tests positive for rhinovirus
                         argvar=list(fun = "lin"), arglag = list(fun = "lin")) #using a linear response
-corona_lag <- crossbasis(data_for_model$v_pos_prop_corona_m21, lag = 0, #percent of tests positive for rhinovirus
+corona_lag <- crossbasis(data_for_model$v_pos_prop_corona_m14, lag = 0, #percent of tests positive for rhinovirus
                          argvar=list(fun = "lin"), arglag = list(fun = "lin"))
-rsv_lag <- crossbasis(data_for_model$v_pos_prop_RSV_m21, lag = 0, #percent of tests positive for rhinovirus
+rsv_lag <- crossbasis(data_for_model$v_pos_prop_RSV_m14, lag = 0, #percent of tests positive for rhinovirus
                       argvar=list(fun = "lin"), arglag = list(fun = "lin"))
-flu_lag <- crossbasis(data_for_model$v_pos_prop_flu_m21, lag = 0, #percent of tests positive for influenza (separate dataset)
+flu_lag <- crossbasis(data_for_model$v_pos_prop_flu_m14, lag = 0, #percent of tests positive for influenza (separate dataset)
                       argvar=list(fun = "lin"), arglag = list(fun = "lin"))
 
 
-#school breaks in dlnm format for use with attrdl function for AR
-school_break_lag <- crossbasis(data_for_model$on_break, lag = 14, #percent of tests positive for rhinovirus
-                               argvar=list(fun = "lin"), #shape of response curve
-                               arglag = list(fun = "ns", knots = 3)) #shape of lag
-# fall_return_lag <- crossbasis(data_for_model$school_first_day_fall, lag = 40, #percent of tests positive for rhinovirus
-#                               argvar=list(fun = "lin"), #shape of response curve
-#                               arglag = list(fun = "ns", knots = 3)) #shape of lag
-# winter_leave_lag <- crossbasis(data_for_model$school_first_day_winter_break, lag = 7, #percent of tests positive for rhinovirus
-#                                argvar=list(fun = "lin"), #shape of response curve
-#                               arglag = list(fun = "ns", knots = 3)) #shape of lag
-# winter_return_lag <- crossbasis(data_for_model$school_first_day_winter, lag = 7, #percent of tests positive for rhinovirus
-#                                 argvar=list(fun = "lin"), #shape of response curve
-#                                arglag = list(fun = "ns", knots = 3)) #shape of lag
-# summer_leave_lag <- crossbasis(data_for_model$school_first_day_summer_break, lag = 7, #percent of tests positive for rhinovirus
-#                                argvar=list(fun = "lin"), #shape of response curve
-#                                arglag = list(fun = "ns", knots = 3)) #shape of lag
-
-
-# #days since break in lag format for use with data visualization
-# days_on_break_knots_response  <- equalknots(data_for_model$on_break, fun="ns", df=3)
-# days_on_break_knots_lag <- equalknots(0:21, fun="ns", df=3)
-# days_on_break_lag <- crossbasis(data_for_model$on_break, lag = 21, #log10 transformed & imputed pollen concentration for Cupressaceae
-#                                 argvar=list(fun = "ns", knots = days_on_break_knots_response), #shape of response curve
-#                                 arglag = list(fun = "ns", knots = days_on_break_knots_lag)) #shape of lag
-# 
 
 #quasiposson glm with included variables
 model1 <- glm(n_cases ~  #number of cases at a station on an observed day
                 NAB_station + #effect of station
                 offset(log(agegroup_x_pop)) +  #offset for the population of a study area
-                school_break_lag +
-                # fall_return_lag + #   # winter_return_lag + #winter_leave_lag +  summer_leave_lag +
-                # ns(days_since_win_break, df = 3) + #young kids: 3, school kids: 5, adults: 3
-                # ns(days_since_sum_break, df = 3) + #young kids: 2, school kids: 3, adults: 3
-                #bs(days_since_holiday, df = 4) + #
-                cup_lag +  trees_lag + pol_other_lag + #dlnm crossbasis for each pollen type
-                #cup_all_lm + trees_lm + pol_other_lm +
+                cup_lag +  #trees_lag + 
+                pol_other_lag + #dlnm crossbasis for each pollen type
+                #cup_all_m + 
+                #trees_m + 
+                #pol_other_m +
                 rhino_lag + corona_lag + rsv_lag + flu_lag +
                 # trees_lag * trees_lm + # v_tests_pos_Rhinovirus_ms+  # all_pol_lm *flu_lag +
-                # met_vpPa + # met_prcpmmday_ls + # met_tavg_s +  #met_tmindegc_s + #met_vpPa +met_sradWm2_s +# met_prcp_flag +
-                #met_tavg_s +
-                met_tmaxdegc_s +
-                met_tmindegc_s +
+                # met_vpPa +  met_prcpmmday_ls +  met_tavg_s +  met_tmindegc_s + met_vpPa +
+                met_sradWm2_s + met_prcp_flag +
+                met_tavg_s +
+               # met_tmaxdegc_s +
+               # met_tmindegc_s +
                 ns(time, df = 21) + # spline for season  #ns(doy, df = 12) + #not including seasonal spline anymore
                 #main_cup_season +
                 week_day, #day of week term
@@ -884,7 +715,7 @@ resid_explor %>%
 
 
 
-### Fig 2,3,4: visualize effects of pollen ###############################################################
+### Fig X: visualize effects of pollen ###############################################################
 #cup all  
 pred1_cup <- crosspred(cup_lag,  model2, #at = 1,
                        at = seq(from = 0, to = max(data_for_model$cup_all_m2, na.rm = T), by = 10), 
@@ -985,199 +816,21 @@ pol_other_lag_rr_panel <-
 fig234 <- #?plot_grid
   cowplot::plot_grid(cup_rr_panel, cup_lag_rr_panel,
                      trees_rr_panel, trees_lag_rr_panel,
-                     # pol_other_rr_panel, pol_other_lag_rr_panel,
+                      pol_other_rr_panel, pol_other_lag_rr_panel,
                      ncol = 2, labels = c("  A) Cupressaceae pollen", 
                                           "B) Cupressaceae pollen by lag", 
                                           "  C) tree pollen", 
-                                          "D) tree pollen by lag"
-                                          # "    E) other pollen",
-                                          # "F) other pollen by lag"
+                                          "D) tree pollen by lag",
+                                           "    E) other pollen",
+                                           "F) other pollen by lag"
                      ),
                      rel_widths = c(0.8, 1, 0.8, 1),
                      label_size = 11, label_x = 0.14, label_y = 0.9, hjust = 0, vjust = 0)
 #fig234
-fig_234_name <- paste0("Z:/THCIC/Katz/results/",
-                       "fig234_pol_ages",age_low,"_",age_hi,"_dist_25km", "_",Sys.Date(),".jpg") #NAB_min_dist_threshold
+fig_234_name <- paste0("Z:/THCIC/Katz/copd_results/",
+                       "fig2_pol_dist_25km", "_",Sys.Date(),".jpg") #NAB_min_dist_threshold
 ggsave(file = fig_234_name, plot = fig234,
        height = 18, width = 21, units = "cm", dpi = 300)
-
-
-
-### Fig 2: combines school children and adults #############################################
-#run the model first for school kids and then create panels A-D
-#### cup
-pred1_cup_school_kids <- crosspred(cup_lag,  model2, #at = 1,
-                                   at = seq(from = 0, to = max(data_for_model_noNA$cup_all_m2), by = 10), 
-                                   bylag = 0.5, cen = 0, cumul = TRUE) #str(pred1_cup)
-
-cup_rr_panel_school_kids <- 
-  data.frame(pol_conc = (pred1_cup_school_kids$predvar), 
-             mean = pred1_cup_school_kids$allRRfit,
-             lower = pred1_cup_school_kids$allRRlow,
-             upper = pred1_cup_school_kids$allRRhigh) %>% 
-  filter(pol_conc < quantile(data_for_model_noNA$cup_all_m2, 0.99)) %>% #removing the extreme values from this fig
-  
-  ggplot(aes(x = pol_conc, y = mean, ymin = lower, ymax = upper))+
-  geom_ribbon(alpha=0.1)+ geom_line()+ geom_hline(lty=2, yintercept = 1)+ # horizontal reference line at no change in odds
-  xlab(expression(paste("Cupressaceae (pollen grains / m"^"3",")")))+ ylab('RR')+theme_few() +
-  coord_cartesian(xlim = c(0, quantile(data_for_model_noNA$cup_all_m2, 0.99)))#+ scale_x_log10() +   annotation_logticks(sides = "b")  
-#ggtitle(paste0("ages ", age_low, "-", age_hi, "  n_cases = ", sum(data_for_model_noNA$n_cases))) 
-cup_rr_panel_school_kids
-cup_rr_panel_school_kids <- cup_rr_panel_school_kids + geom_rug(data = data_for_model_noNA, aes(x = cup_all_m2 ), sides = "t", alpha = 0.05, inherit.aes = FALSE)
-
-cup_lag_rr_panel_school_kids <-
-  as.data.frame(exp(pred1_cup_school_kids$cumfit)) %>% mutate(pol_conc = pred1_cup_school_kids$predvar) %>% 
-  pivot_longer(., cols = contains("lag"), names_to = "lag", values_to = "RR") %>% 
-  mutate(lag = as.numeric(gsub(pattern = "lag", replacement = "", x = lag)),
-         pol_conc_exp = pol_conc) %>% 
-  filter(pol_conc < quantile(data_for_model_noNA$cup_all_m2, 0.99)) %>% #removing the extreme values from this fig
-  ggplot(aes(x = pol_conc, y = lag, z = RR, color = RR))  + theme_few() +
-  xlab(expression(paste("Cupressaceae (pollen grains / m"^"3",")")))+ #scale_x_log10() +   annotation_logticks(sides = "b")  
-  scale_color_viridis_c(option = "plasma", direction = -1, name = "RR") +  geom_point(size = NA) + #for making the discrete legend continuous
-  geom_contour_filled(bins = 40) +  scale_fill_viridis_d(option = "plasma", direction = -1, name = "RR")  + guides(fill = "none")
-
-
-#### trees 
-pred1_trees_school_kids <- crosspred(trees_lag,  model2, #at = 1,
-                                     at = seq(from = 0, to = max(data_for_model_noNA$trees_m2), by = 10), 
-                                     bylag = 0.5, cen = 0, cumul = TRUE) #str(pred1_cup)
-
-trees_rr_panel_school_kids <- 
-  data.frame(pol_conc = (pred1_trees_school_kids$predvar), 
-             mean = pred1_trees_school_kids$allRRfit,
-             lower = pred1_trees_school_kids$allRRlow,
-             upper = pred1_trees_school_kids$allRRhigh) %>% 
-  filter(pol_conc < quantile(data_for_model_noNA$trees_m2, 0.99)) %>% #removing the extreme values from this fig
-  
-  ggplot(aes(x = pol_conc, y = mean, ymin = lower, ymax = upper))+
-  geom_ribbon(alpha=0.1)+ geom_line()+ geom_hline(lty=2, yintercept = 1)+ # horizontal reference line at no change in odds
-  xlab(expression(paste("trees (pollen grains / m"^"3",")")))+ ylab('RR')+theme_few() +
-  coord_cartesian(xlim = c(0, quantile(data_for_model_noNA$trees_m2, 0.99)))#+ scale_x_log10() +   annotation_logticks(sides = "b")  
-#ggtitle(paste0("ages ", age_low, "-", age_hi, "  n_cases = ", sum(data_for_model_noNA$n_cases))) 
-trees_rr_panel_school_kids
-trees_rr_panel_school_kids <- trees_rr_panel_school_kids + geom_rug(data = data_for_model_noNA, aes(x = trees_m2 ), sides = "t", alpha = 0.05, inherit.aes = FALSE)
-
-trees_lag_rr_panel_school_kids <-
-  as.data.frame(exp(pred1_trees_school_kids$cumfit)) %>% mutate(pol_conc = pred1_trees_school_kids$predvar) %>% 
-  pivot_longer(., cols = contains("lag"), names_to = "lag", values_to = "RR") %>% 
-  mutate(lag = as.numeric(gsub(pattern = "lag", replacement = "", x = lag)),
-         pol_conc_exp = pol_conc) %>% 
-  filter(pol_conc < quantile(data_for_model_noNA$trees_m2, 0.99)) %>% #removing the extreme values from this fig
-  ggplot(aes(x = pol_conc, y = lag, z = RR, color = RR))  + theme_few() +
-  xlab(expression(paste("trees (pollen grains / m"^"3",")")))+ #scale_x_log10() +   annotation_logticks(sides = "b")  
-  scale_color_viridis_c(option = "plasma", direction = -1, name = "RR") +  geom_point(size = NA) + #for making the discrete legend continuous
-  geom_contour_filled(bins = 99) +  scale_fill_viridis_d(option = "plasma", direction = -1, name = "RR")  + guides(fill = "none")
-
-
-#### run the model next for adults
-#### cup
-pred1_cup_adults <- crosspred(cup_lag,  model2, #at = 1,
-                              at = seq(from = 0, to = max(data_for_model_noNA$cup_all_m2), by = 10), 
-                              bylag = 0.5, cen = 0, cumul = TRUE) #str(pred1_cup)
-
-cup_rr_panel_adults <- 
-  data.frame(pol_conc = (pred1_cup_adults$predvar), 
-             mean = pred1_cup_adults$allRRfit,
-             lower = pred1_cup_adults$allRRlow,
-             upper = pred1_cup_adults$allRRhigh) %>% 
-  filter(pol_conc < quantile(data_for_model_noNA$cup_all_m2, 0.99)) %>% #removing the extreme values from this fig
-  
-  ggplot(aes(x = pol_conc, y = mean, ymin = lower, ymax = upper))+
-  geom_ribbon(alpha=0.1)+ geom_line()+ geom_hline(lty=2, yintercept = 1)+ # horizontal reference line at no change in odds
-  xlab(expression(paste("Cupressaceae (pollen grains / m"^"3",")")))+ ylab('RR')+theme_few() +
-  coord_cartesian(xlim = c(0, quantile(data_for_model_noNA$cup_all_m2, 0.99)))#+ scale_x_log10() +   annotation_logticks(sides = "b")  
-#ggtitle(paste0("ages ", age_low, "-", age_hi, "  n_cases = ", sum(data_for_model_noNA$n_cases))) 
-cup_rr_panel_adults
-cup_rr_panel_adults <- cup_rr_panel_adults + geom_rug(data = data_for_model_noNA, aes(x = cup_all_m2 ), sides = "t", alpha = 0.05, inherit.aes = FALSE)
-
-cup_lag_rr_panel_adults <-
-  as.data.frame(exp(pred1_cup_adults$cumfit)) %>% mutate(pol_conc = pred1_cup_adults$predvar) %>% 
-  pivot_longer(., cols = contains("lag"), names_to = "lag", values_to = "RR") %>% 
-  mutate(lag = as.numeric(gsub(pattern = "lag", replacement = "", x = lag)),
-         pol_conc_exp = pol_conc) %>% 
-  filter(pol_conc < quantile(data_for_model_noNA$cup_all_m2, 0.99)) %>% #removing the extreme values from this fig
-  ggplot(aes(x = pol_conc, y = lag, z = RR, color = RR))  + theme_few() +
-  xlab(expression(paste("Cupressaceae (pollen grains / m"^"3",")")))+ #scale_x_log10() +   annotation_logticks(sides = "b")  
-  scale_color_viridis_c(option = "plasma", direction = -1, name = "RR") +  geom_point(size = NA) + #for making the discrete legend continuous
-  geom_contour_filled(bins = 40) +  scale_fill_viridis_d(option = "plasma", direction = -1, name = "RR")  + guides(fill = "none")
-
-
-#### trees 
-pred1_trees_adults <- crosspred(trees_lag,  model2, #at = 1,
-                                at = seq(from = 0, to = max(data_for_model_noNA$trees_m2), by = 10), 
-                                bylag = 0.5, cen = 0, cumul = TRUE) #str(pred1_cup)
-
-trees_rr_panel_adults <- 
-  data.frame(pol_conc = (pred1_trees_adults$predvar), 
-             mean = pred1_trees_adults$allRRfit,
-             lower = pred1_trees_adults$allRRlow,
-             upper = pred1_trees_adults$allRRhigh) %>% 
-  filter(pol_conc < quantile(data_for_model_noNA$trees_m2, 0.99)) %>% #removing the extreme values from this fig
-  
-  ggplot(aes(x = pol_conc, y = mean, ymin = lower, ymax = upper))+
-  geom_ribbon(alpha=0.1)+ geom_line()+ geom_hline(lty=2, yintercept = 1)+ # horizontal reference line at no change in odds
-  xlab(expression(paste("trees (pollen grains / m"^"3",")")))+ ylab('RR')+theme_few() +
-  coord_cartesian(xlim = c(0, quantile(data_for_model_noNA$trees_m2, 0.99)))#+ scale_x_log10() +   annotation_logticks(sides = "b")  
-#ggtitle(paste0("ages ", age_low, "-", age_hi, "  n_cases = ", sum(data_for_model_noNA$n_cases))) 
-trees_rr_panel_adults
-trees_rr_panel_adults <- trees_rr_panel_adults + geom_rug(data = data_for_model_noNA, aes(x = trees_m2 ), sides = "t", alpha = 0.05, inherit.aes = FALSE)
-
-trees_lag_rr_panel_adults <-
-  as.data.frame(exp(pred1_trees_adults$cumfit)) %>% mutate(pol_conc = pred1_trees_adults$predvar) %>% 
-  pivot_longer(., cols = contains("lag"), names_to = "lag", values_to = "RR") %>% 
-  mutate(lag = as.numeric(gsub(pattern = "lag", replacement = "", x = lag)),
-         pol_conc_exp = pol_conc) %>% 
-  filter(pol_conc < quantile(data_for_model_noNA$trees_m2, 0.99)) %>% #removing the extreme values from this fig
-  ggplot(aes(x = pol_conc, y = lag, z = RR, color = RR))  + theme_few() +
-  xlab(expression(paste("trees (pollen grains / m"^"3",")")))+ #scale_x_log10() +   annotation_logticks(sides = "b")  
-  scale_color_viridis_c(option = "plasma", direction = -1, name = "RR") +  geom_point(size = NA) + #for making the discrete legend continuous
-  geom_contour_filled(bins = 99) +  scale_fill_viridis_d(option = "plasma", direction = -1, name = "RR")  + guides(fill = "none")
-
-#### constructing the sub-grids for fig 2
-fig2_kids <- #?plot_grid
-  cowplot::plot_grid(cup_rr_panel_school_kids, cup_lag_rr_panel_school_kids,
-                     trees_rr_panel_school_kids, trees_lag_rr_panel_school_kids,
-                     ncol = 2, labels = c("  A) Cupressaceae pollen", 
-                                          "B) Cupressaceae pollen by lag", 
-                                          "  C) tree pollen", 
-                                          "D) tree pollen by lag"
-                     ),
-                     rel_widths = c(0.8, 1, 0.8, 1),
-                     label_size = 11, label_x = 0.14, label_y = 0.9, hjust = 0, vjust = 0)
-
-fig2_adults <- #?plot_grid
-  cowplot::plot_grid(cup_rr_panel_adults, cup_lag_rr_panel_adults,
-                     trees_rr_panel_adults, trees_lag_rr_panel_adults,
-                     ncol = 2, labels = c( 
-                       "  E) Cupressaceae pollen", 
-                       "F) Cupressaceae pollen by lag", 
-                       "  G) tree pollen", 
-                       "H) tree pollen by lag"
-                     ),
-                     rel_widths = c(0.8, 1, 0.8, 1),
-                     label_size = 11, label_x = 0.14, label_y = 0.9, hjust = 0, vjust = 0)
-
-# creating the titles for school kids and adult grids
-title_kids <- ggdraw() +  draw_label( "school children",  fontface = 'bold', angle = 90) +
-  theme( plot.margin = margin(0,0, 0, 10) )
-title_adults <- ggdraw() +  draw_label( "adults",  fontface = 'bold', angle = 90) +
-  theme( plot.margin = margin(0,0, 0, 10) )
-
-# construct fig 2, including the vertical grid titles and grids for school kids and adults
-fig2 <- plot_grid(
-  title_kids, fig2_kids,
-  title_adults, fig2_adults,
-  ncol = 2,
-  # rel_heights values control vertical title margins
-  rel_widths = c(0.03, 1,  0.03, 1),
-  align = "v")
-
-fig_2_name <- paste0("Z:/THCIC/Katz/results/",
-                     "fig2_school_kids_adults_dist_25km", "_",Sys.Date(),".jpg") #NAB_min_dist_threshold
-ggsave(file = fig_2_name, plot = fig2,
-       height = 36, width = 21, units = "cm", dpi = 300)
-
-
 
 
 
@@ -1227,133 +880,7 @@ data.frame(flu_conc = pred1_flu$predvar,
   geom_ribbon(alpha=0.1)+ geom_line()+ geom_hline(lty=2, yintercept = 1)+ # horizontal reference line at no change in odds
   xlab("flu")+ ylab('RR')+theme_few()
 
-### school break lag ###################################################
 
-#on break lag
-pred1_break <- crosspred(school_break_lag,  model = model2, by = 1,  bylag = 1,  cen = 0,  cumul = TRUE) #str(pred1_cup)
-
-break_rr_panel <- 
-  data.frame(pol_conc = (pred1_break$predvar), 
-             mean = pred1_break$allRRfit,
-             lower = pred1_break$allRRlow,
-             upper = pred1_break$allRRhigh) %>% 
-  ggplot(aes(x = pol_conc, y = mean, ymin = lower, ymax = upper))+
-  geom_ribbon(alpha=0.1)+ geom_line()+ geom_hline(lty=2, yintercept = 1)+ # horizontal reference line at no change in odds
-  xlab(expression(paste("on break")))+ ylab('RR')+theme_few() 
-break_rr_panel
-
-break_lag_rr_panel <-
-  as.data.frame(exp(pred1_break$cumfit)) %>% mutate(pol_conc = pred1_break$predvar) %>% 
-  pivot_longer(., cols = contains("lag"), names_to = "lag", values_to = "RR") %>% 
-  mutate(lag = as.numeric(gsub(pattern = "lag", replacement = "", x = lag)),
-         pol_conc_exp = pol_conc) %>% 
-  filter(pol_conc == 1) %>% 
-  ggplot(aes(x = lag, y = RR))  + theme_few() +
-  geom_point() + geom_line() + scale_color_viridis_c(option = "plasma", direction = -1, name = "RR")  +
-  xlab("days since school break") + ylab("cumulative effect on RR") + scale_y_continuous(limits = c(0,1))
-
-
-holiday_attr <- attrdl(x = data_for_model$on_break, basis = school_break_lag, cases = data_for_model$n_cases, model = model2, dir = "back", sim = TRUE,
-                       cen = 0, tot = TRUE, type = "an", range = NULL, nsim = 10000)
-sprintf("%.0f", mean(holiday_attr))
-sprintf("%.0f", as.numeric(quantile(holiday_attr, probs = 0.025)))
-sprintf("%.0f", as.numeric(quantile(holiday_attr, probs = 0.975)))
-sprintf("%.1f", 100*mean(holiday_attr) / sum(model2$fitted.values))
-sprintf("%.1f", 100*as.numeric(quantile(holiday_attr, probs = 0.025))/sum(model2$fitted.values))
-sprintf("%.1f", 100*as.numeric(quantile(holiday_attr, probs = 0.975))/sum(model2$fitted.values))
-
-
-
-# #fall return
-# pred1_fall_return <- crosspred(fall_return_lag,  model = model2, by = 1,  bylag = 1, cen = 0,  cumul = TRUE) #str(pred1_cup)
-# 
-# fall_return_panel <- 
-#   data.frame(pol_conc = (pred1_fall_return$predvar), 
-#              mean = pred1_fall_return$allRRfit,
-#              lower = pred1_fall_return$allRRlow,
-#              upper = pred1_fall_return$allRRhigh) %>% 
-#   ggplot(aes(x = pol_conc, y = mean, ymin = lower, ymax = upper))+
-#   geom_ribbon(alpha=0.1)+ geom_line()+ geom_hline(lty=2, yintercept = 1)+ # horizontal reference line at no change in odds
-#   xlab(expression(paste("on break")))+ ylab('RR')+theme_few() 
-# fall_return_panel
-# 
-# #fall_return_lag_rr_panel <-
-# as.data.frame(exp(pred1_fall_return$cumfit)) %>% mutate(pol_conc = pred1_fall_return$predvar) %>% 
-#   pivot_longer(., cols = contains("lag"), names_to = "lag", values_to = "RR") %>% 
-#   mutate(lag = as.numeric(gsub(pattern = "lag", replacement = "", x = lag)),
-#          pol_conc_exp = pol_conc) %>% 
-#   ggplot(aes(x = pol_conc, y = lag, z = RR, color = log10(RR)))  + theme_few() +
-#   geom_point(size = 5) +  scale_color_viridis_c(option = "plasma", direction = -1, name = "RR")  +
-#     xlab("on break")
-#   
-#   
-# #winter leave 
-# pred1_winter_leave <- crosspred(winter_leave_lag,  model = model2, by = 1,  bylag = 1, cen = 0,  cumul = TRUE) #str(pred1_cup)
-# 
-# winter_leave_rr_panel <- 
-#   data.frame(pol_conc = (pred1_winter_leave$predvar), 
-#              mean = pred1_winter_leave$allRRfit,
-#              lower = pred1_winter_leave$allRRlow,
-#              upper = pred1_winter_leave$allRRhigh) %>% 
-#   ggplot(aes(x = pol_conc, y = mean, ymin = lower, ymax = upper))+
-#   geom_ribbon(alpha=0.1)+ geom_line()+ geom_hline(lty=2, yintercept = 1)+ # horizontal reference line at no change in odds
-#   xlab(expression(paste("on break")))+ ylab('RR')+theme_few() 
-# winter_leave_rr_panel
-# 
-# #winter_leave_rr_panel <-
-# as.data.frame(exp(pred1_winter_leave$cumfit)) %>% mutate(pol_conc = pred1_winter_leave$predvar) %>% 
-#   pivot_longer(., cols = contains("lag"), names_to = "lag", values_to = "RR") %>% 
-#   mutate(lag = as.numeric(gsub(pattern = "lag", replacement = "", x = lag)),
-#          pol_conc_exp = pol_conc) %>% 
-#   ggplot(aes(x = pol_conc, y = lag, z = RR, color = RR))  + theme_few() +
-#   geom_point(size = 5) +  scale_color_viridis_c(option = "plasma", direction = -1, name = "RR")  +
-#   xlab("on break")
-# 
-# 
-# #winter return 
-# pred1_winter_return <- crosspred(winter_return_lag,  model = model2, by = 1,  bylag = 1, cen = 0,  cumul = TRUE) #str(pred1_cup)
-# 
-# winter_return_rr_panel <- 
-#   data.frame(pol_conc = (pred1_winter_return$predvar), 
-#              mean = pred1_winter_return$allRRfit,
-#              lower = pred1_winter_return$allRRlow,
-#              upper = pred1_winter_return$allRRhigh) %>% 
-#   ggplot(aes(x = pol_conc, y = mean, ymin = lower, ymax = upper))+
-#   geom_ribbon(alpha=0.1)+ geom_line()+ geom_hline(lty=2, yintercept = 1)+ # horizontal reference line at no change in odds
-#   xlab(expression(paste("on break")))+ ylab('RR')+theme_few() 
-# winter_return_rr_panel
-# 
-# #winter_return_rr_panel <-
-# as.data.frame(exp(pred1_winter_return$cumfit)) %>% mutate(pol_conc = pred1_winter_return$predvar) %>% 
-#   pivot_longer(., cols = contains("lag"), names_to = "lag", values_to = "RR") %>% 
-#   mutate(lag = as.numeric(gsub(pattern = "lag", replacement = "", x = lag)),
-#          pol_conc_exp = pol_conc) %>% 
-#   ggplot(aes(x = pol_conc, y = lag, z = RR, color = RR))  + theme_few() +
-#   geom_point(size = 5) +  scale_color_viridis_c(option = "plasma", direction = -1, name = "RR")  +
-#   xlab("on break")
-# 
-# 
-# #summer leave
-# pred1_summer_leave <- crosspred(summer_leave_lag,  model = model2, by = 1,  bylag = 1, cen = 0,  cumul = TRUE) #str(pred1_cup)
-# 
-# summer_leave_rr_panel <- 
-#   data.frame(pol_conc = (pred1_summer_leave$predvar), 
-#              mean = pred1_summer_leave$allRRfit,
-#              lower = pred1_summer_leave$allRRlow,
-#              upper = pred1_summer_leave$allRRhigh) %>% 
-#   ggplot(aes(x = pol_conc, y = mean, ymin = lower, ymax = upper))+
-#   geom_ribbon(alpha=0.1)+ geom_line()+ geom_hline(lty=2, yintercept = 1)+ # horizontal reference line at no change in odds
-#   xlab(expression(paste("on break")))+ ylab('RR')+theme_few() 
-# summer_leave_rr_panel
-# 
-# #summer_leave_rr_panel <-
-# as.data.frame(exp(pred1_summer_leave$cumfit)) %>% mutate(pol_conc = pred1_summer_leave$predvar) %>% 
-#   pivot_longer(., cols = contains("lag"), names_to = "lag", values_to = "RR") %>% 
-#   mutate(lag = as.numeric(gsub(pattern = "lag", replacement = "", x = lag)),
-#          pol_conc_exp = pol_conc) %>% 
-#   ggplot(aes(x = pol_conc, y = lag, z = RR, color = RR))  + theme_few() +
-#   geom_point(size = 5) +  scale_color_viridis_c(option = "plasma", direction = -1, name = "RR")  +
-#   xlab("on break")
 
 
 
@@ -1508,7 +1035,7 @@ attr_t_rsv <- attrdl(x = data_for_model$v_pos_prop_RSV_m21, basis = rsv_lag, cas
 # summary(fit)
 # plot(jitter(data_for_model$n_cases), predicted_n_cases_t)
 
-attr_df <- data.frame(attr_t_cup, attr_t_trees, attr_t_rhino, attr_t_corona, attr_t_flu, attr_t_rsv) #attr_t_other_pol, , predicted_n_cases_t
+attr_df <- data.frame(attr_t_cup, attr_t_trees, attr_t_other_pol, attr_t_rhino, attr_t_corona, attr_t_flu, attr_t_rsv) #, , predicted_n_cases_t
 attr_df[attr_df < 0] <- 0 #removing net protective effects of all variables
 #data_for_model$n_cases
 # attr_df_p <- attr_df/predicted_n_cases_t
@@ -1517,8 +1044,8 @@ attr_full_df <- bind_cols(data_for_model, attr_df) %>%
   # mutate(attr_t_unexplained = predicted_n_cases_t - attr_t_cup - attr_t_trees - attr_t_rhino - attr_t_corona - attr_t_flu - attr_t_other_pol) %>% 
   dplyr::select(date, NAB_station, agegroup_x_pop, 
                 #attr_t_unexplained, 
-                attr_t_cup, attr_t_trees, 
-                attr_t_rhino, attr_t_corona, attr_t_flu, attr_t_rsv) %>%   #attr_t_other_pol,
+                attr_t_cup, attr_t_trees, attr_t_other_pol,
+                attr_t_rhino, attr_t_corona, attr_t_flu, attr_t_rsv) %>%   #,
   pivot_longer(cols = contains("attr_t_"), names_to = "var", values_to = "risk_cases") %>% 
   mutate(week = week(date)) %>% 
   group_by(NAB_station, agegroup_x_pop, week, var) %>% 
@@ -1529,8 +1056,8 @@ attr_full_df <- bind_cols(data_for_model, attr_df) %>%
                                                      RSV = "attr_t_rsv",
                                                      Influenza = "attr_t_flu",
                                                      Cupressaceae = "attr_t_cup", 
-                                                     trees = "attr_t_trees" 
-                                                     #'other pollen' = "attr_t_other_pol"
+                                                     trees = "attr_t_trees", 
+                                                     'other pollen' = "attr_t_other_pol"
   ),
   attr_risk_var = forcats::fct_relevel(attr_risk_var_unorder, c("Rhinovirus", "Corona", "RSV","Influenza",
                                                                 "Cupressaceae", "trees", "other pollen")), #"other_pollen"  "unexplained"
@@ -1545,104 +1072,101 @@ observed_ncases_t <- data_for_model %>%
   mutate(attr_risk_var = "Rhinovirus") 
 
 library(scales)
-fig567_ymax <-  ifelse(age_low == 0,   40, #setting figure ymax manually
-                       (ifelse(age_low == 5,  40, 
-                               (ifelse(age_low == 18, 11, 
-                                       print("error in age_low"))))))
+fig567_ymax <-  15
 fig567 <- ggplot(attr_full_df, aes(x = date2, y = (risk_cases / agegroup_x_pop) * 1000000, fill = attr_risk_var)) + 
-  facet_wrap(~NAB_station) + geom_area() + theme_bw() + scale_fill_viridis_d(name = "attributable risk") + 
-  ylab("asthma-related ED visits (per 1,000,000 people per day)") + xlab("date") +
-  scale_x_date(labels = date_format("%b")) + coord_cartesian(ylim = c(0, fig567_ymax)) + #c(-0.01, .15) #c(-0.02, .6)
+  facet_wrap(~NAB_station, scales = "free") + geom_area() + theme_bw() + scale_fill_viridis_d(name = "attributable risk") + 
+  ylab("COPD-related ED visits (per 1,000,000 people per day)") + xlab("date") +
+  scale_x_date(labels = date_format("%b")) + #coord_cartesian(ylim = c(0, fig567_ymax)) + #c(-0.01, .15) #c(-0.02, .6)
   geom_step(data = observed_ncases_t, aes( x = date2, y =(mean_cases / agegroup_x_pop) * 1000000, 
                                            color = "observed cases")) + scale_color_discrete(name = "")  +
   theme(legend.position = c(0.85, 0.17))
 
-#fig567
-fig_567_name <- paste0("Z:/THCIC/Katz/results/",
-                       "fig567_AR_ages",age_low,"_",age_hi,"_dist_25km", "_",Sys.Date(),".jpg")
+fig567
+fig_567_name <- paste0("Z:/THCIC/Katz/copd_results/",
+                       "fig_X_AR_dist_25km", "_",Sys.Date(),".jpg")
 ggsave(file = fig_567_name, plot = fig567, height = 25, width = 21, units = "cm", dpi = 300)
 
 
-### table to export for Darlene ########################################################
-#export attributable risk for each virus by mean per week over the study period for each age group
-#providing the attributable risk fraction instead of the actual number (do do that, switch back to attr_t_df)
-#removing the school calendar from the model
-
-attr_tf_cup <- attrdl(x = data_for_model$cup_all_m, basis = cup_lag, cases = data_for_model$n_cases,
-                      model = model2, dir = "back", sim = FALSE, cen = 0, tot = FALSE, type = "af", range = NULL)
-
-attr_tf_trees <- attrdl(x = data_for_model$trees_m, basis = trees_lag, cases = data_for_model$n_cases,
-                        model = model2, dir = "back", sim = FALSE, cen = 0, tot = FALSE, type = "af", range = NULL)
-
-attr_tf_other_pol <- attrdl(x = data_for_model$pol_other_m, basis = pol_other_lag, cases = data_for_model$n_cases,
-                            model = model2, dir = "back", sim = FALSE, cen = 0, tot = FALSE, type = "af", range = NULL)
-
-attr_tf_rhino <- attrdl(x = data_for_model$v_pos_prop_rhino_m21, basis = rhino_lag, cases = data_for_model$n_cases,
-                        model = model2, dir = "back", sim = FALSE, cen = 0, tot = FALSE, type = "af", range = NULL)
-
-attr_tf_corona <- attrdl(x = data_for_model$v_pos_prop_corona_m21, basis = corona_lag, cases = data_for_model$n_cases,
-                         model = model2, dir = "back", sim = FALSE, cen = 0, tot = FALSE, type = "af", range = NULL)
-
-attr_tf_flu <- attrdl(x = data_for_model$v_pos_prop_flu_m21, basis = flu_lag, cases = data_for_model$n_cases,
-                      model = model2, dir = "back", sim = FALSE, cen = 0, tot = FALSE, type = "af", range = NULL)
-
-attr_tf_rsv <- attrdl(x = data_for_model$v_pos_prop_RSV_m21, basis = rsv_lag, cases = data_for_model$n_cases,
-                      model = model2, dir = "back", sim = FALSE, cen = 0, tot = FALSE, type = "af", range = NULL)
-
-attr_f_df <- data.frame(attr_tf_cup, attr_tf_trees, attr_tf_rhino, attr_tf_corona, attr_tf_flu, attr_tf_rsv) 
-attr_f_df[attr_f_df < 0] <- 0 #removing net protective effects of all variables
-
-#get a date that is within each week
-date_week_workaround <- data_for_model %>%  ungroup()%>% 
-  mutate(week_s = epiweek(date), year_s = year(date)) %>% 
-  group_by(year_s, week_s) %>% 
-  slice(1) %>% ungroup() %>% 
-  dplyr::select(year_s, week_s, date) 
-
-attr_full_df_db <- bind_cols(data_for_model, attr_f_df) %>% 
-  # mutate(attr_t_unexplained = predicted_n_cases_t - attr_t_cup - attr_t_trees - attr_t_rhino - attr_t_corona - attr_t_flu - attr_t_other_pol) %>% 
-  dplyr::select(date, NAB_station, agegroup_x_pop, 
-                #attr_t_unexplained, 
-                attr_tf_cup, attr_tf_trees, 
-                attr_tf_rhino, attr_tf_corona, attr_tf_flu, attr_tf_rsv) %>%   #attr_t_other_pol,
-  pivot_longer(cols = contains("attr_tf_"), names_to = "var", values_to = "risk_cases") %>% 
-  mutate(week_s = epiweek(date)) %>%
-  mutate(year_s = year(date),
-         year_week = paste(year_s, week_s)) %>% 
-  group_by(NAB_station, agegroup_x_pop, year_s, year_week, week_s, var) %>%
-  summarize(risk_cases_mean = mean(risk_cases)) %>%
-  #mutate(date2 = lubridate::parse_date_time(paste(year_s, week, 1, sep="/"),'Y/W/w')) %>% 
-  mutate(attr_risk_var_unorder = forcats::fct_recode(var, #unexplained = "attr_t_unexplained",
-                                                     Rhinovirus = "attr_tf_rhino", 
-                                                     Corona = "attr_tf_corona",
-                                                     RSV = "attr_tf_rsv",
-                                                     Influenza = "attr_tf_flu",
-                                                     Cupressaceae = "attr_tf_cup", 
-                                                     trees = "attr_tf_trees",
-                                                     # other_pollen = "attr_tf_other_pol"
-  ),
-  attr_risk_var = forcats::fct_relevel(attr_risk_var_unorder, c("Rhinovirus", "Corona", "RSV","Influenza",
-                                                                "Cupressaceae", "trees" #, "other_pollen"
-  ))) %>%      #"other_pollen"  "unexplained"
-  left_join(., date_week_workaround) %>% ungroup() %>% 
-  dplyr::select(-attr_risk_var_unorder, -var, -year_week) 
-
-attr_full_df_db %>% 
-  filter(NAB_station == "Austin") %>% 
-  #filter(attr_risk_var == "Rhinovirus") %>%  
-  ggplot(aes(x = date, y = risk_cases_mean, col = attr_risk_var)) + geom_line() + facet_wrap(~NAB_station)
-#geom_line(aes(y=zoo::rollmean(risk_cases_mean, 2, na.pad=TRUE))) + 
-
-attr_full_df_db %>% 
-  filter(attr_risk_var != "Cupressaceae") %>% 
-  filter(attr_risk_var != "trees") %>% 
-  group_by(NAB_station, date)%>%
-  summarize(total_virus = sum(risk_cases_mean)) %>% 
-  ggplot(aes(x=date, y = total_virus)) + geom_point() + facet_wrap(~NAB_station)
-
-
-write_csv(attr_full_df_db, "Z:/THCIC/Katz/export for Darlene/attributable_risk_youngchildren_230515.csv")
-
+# ### table to export for Darlene ########################################################
+# #export attributable risk for each virus by mean per week over the study period for each age group
+# #providing the attributable risk fraction instead of the actual number (do do that, switch back to attr_t_df)
+# #removing the school calendar from the model
+# 
+# attr_tf_cup <- attrdl(x = data_for_model$cup_all_m, basis = cup_lag, cases = data_for_model$n_cases,
+#                       model = model2, dir = "back", sim = FALSE, cen = 0, tot = FALSE, type = "af", range = NULL)
+# 
+# attr_tf_trees <- attrdl(x = data_for_model$trees_m, basis = trees_lag, cases = data_for_model$n_cases,
+#                         model = model2, dir = "back", sim = FALSE, cen = 0, tot = FALSE, type = "af", range = NULL)
+# 
+# attr_tf_other_pol <- attrdl(x = data_for_model$pol_other_m, basis = pol_other_lag, cases = data_for_model$n_cases,
+#                             model = model2, dir = "back", sim = FALSE, cen = 0, tot = FALSE, type = "af", range = NULL)
+# 
+# attr_tf_rhino <- attrdl(x = data_for_model$v_pos_prop_rhino_m21, basis = rhino_lag, cases = data_for_model$n_cases,
+#                         model = model2, dir = "back", sim = FALSE, cen = 0, tot = FALSE, type = "af", range = NULL)
+# 
+# attr_tf_corona <- attrdl(x = data_for_model$v_pos_prop_corona_m21, basis = corona_lag, cases = data_for_model$n_cases,
+#                          model = model2, dir = "back", sim = FALSE, cen = 0, tot = FALSE, type = "af", range = NULL)
+# 
+# attr_tf_flu <- attrdl(x = data_for_model$v_pos_prop_flu_m21, basis = flu_lag, cases = data_for_model$n_cases,
+#                       model = model2, dir = "back", sim = FALSE, cen = 0, tot = FALSE, type = "af", range = NULL)
+# 
+# attr_tf_rsv <- attrdl(x = data_for_model$v_pos_prop_RSV_m21, basis = rsv_lag, cases = data_for_model$n_cases,
+#                       model = model2, dir = "back", sim = FALSE, cen = 0, tot = FALSE, type = "af", range = NULL)
+# 
+# attr_f_df <- data.frame(attr_tf_cup, attr_tf_trees, attr_tf_rhino, attr_tf_corona, attr_tf_flu, attr_tf_rsv) 
+# attr_f_df[attr_f_df < 0] <- 0 #removing net protective effects of all variables
+# 
+# #get a date that is within each week
+# date_week_workaround <- data_for_model %>%  ungroup()%>% 
+#   mutate(week_s = epiweek(date), year_s = year(date)) %>% 
+#   group_by(year_s, week_s) %>% 
+#   slice(1) %>% ungroup() %>% 
+#   dplyr::select(year_s, week_s, date) 
+# 
+# attr_full_df_db <- bind_cols(data_for_model, attr_f_df) %>% 
+#   # mutate(attr_t_unexplained = predicted_n_cases_t - attr_t_cup - attr_t_trees - attr_t_rhino - attr_t_corona - attr_t_flu - attr_t_other_pol) %>% 
+#   dplyr::select(date, NAB_station, agegroup_x_pop, 
+#                 #attr_t_unexplained, 
+#                 attr_tf_cup, attr_tf_trees, 
+#                 attr_tf_rhino, attr_tf_corona, attr_tf_flu, attr_tf_rsv) %>%   #attr_t_other_pol,
+#   pivot_longer(cols = contains("attr_tf_"), names_to = "var", values_to = "risk_cases") %>% 
+#   mutate(week_s = epiweek(date)) %>%
+#   mutate(year_s = year(date),
+#          year_week = paste(year_s, week_s)) %>% 
+#   group_by(NAB_station, agegroup_x_pop, year_s, year_week, week_s, var) %>%
+#   summarize(risk_cases_mean = mean(risk_cases)) %>%
+#   #mutate(date2 = lubridate::parse_date_time(paste(year_s, week, 1, sep="/"),'Y/W/w')) %>% 
+#   mutate(attr_risk_var_unorder = forcats::fct_recode(var, #unexplained = "attr_t_unexplained",
+#                                                      Rhinovirus = "attr_tf_rhino", 
+#                                                      Corona = "attr_tf_corona",
+#                                                      RSV = "attr_tf_rsv",
+#                                                      Influenza = "attr_tf_flu",
+#                                                      Cupressaceae = "attr_tf_cup", 
+#                                                      trees = "attr_tf_trees",
+#                                                      # other_pollen = "attr_tf_other_pol"
+#   ),
+#   attr_risk_var = forcats::fct_relevel(attr_risk_var_unorder, c("Rhinovirus", "Corona", "RSV","Influenza",
+#                                                                 "Cupressaceae", "trees" #, "other_pollen"
+#   ))) %>%      #"other_pollen"  "unexplained"
+#   left_join(., date_week_workaround) %>% ungroup() %>% 
+#   dplyr::select(-attr_risk_var_unorder, -var, -year_week) 
+# 
+# attr_full_df_db %>% 
+#   filter(NAB_station == "Austin") %>% 
+#   #filter(attr_risk_var == "Rhinovirus") %>%  
+#   ggplot(aes(x = date, y = risk_cases_mean, col = attr_risk_var)) + geom_line() + facet_wrap(~NAB_station)
+# #geom_line(aes(y=zoo::rollmean(risk_cases_mean, 2, na.pad=TRUE))) + 
+# 
+# attr_full_df_db %>% 
+#   filter(attr_risk_var != "Cupressaceae") %>% 
+#   filter(attr_risk_var != "trees") %>% 
+#   group_by(NAB_station, date)%>%
+#   summarize(total_virus = sum(risk_cases_mean)) %>% 
+#   ggplot(aes(x=date, y = total_virus)) + geom_point() + facet_wrap(~NAB_station)
+# 
+# 
+# write_csv(attr_full_df_db, "Z:/THCIC/Katz/export for Darlene/attributable_risk_youngchildren_230515.csv")
+# 
 
 
 
@@ -1716,83 +1240,83 @@ attr_f_df[attr_f_df < 0] <- 0 #removing net protective effects of all variables
 
 
 
-### Table 3: new version with CIs: attributable risk fraction over time for peak season and main season ################################################
-NAB_list <- unique(data_for_model$NAB_station)
-
-### for jan for cup for each station
-jan_cup_for_table3 <- data.frame(NAB_station = unique(data_for_model$NAB_station), attr_formatted = rep(NA, 8))
-
-for(i in 1:8){
-  data_for_model_jan <- filter(data_for_model, months == 1) %>% 
-    filter(NAB_station == NAB_list[i])
-  attr_tf_cup_jan <- attrdl(x = data_for_model_jan$cup_all_m, basis = cup_lag, cases = data_for_model_jan$n_cases,
-                            model = model2, dir = "back", sim = TRUE, cen = 0, tot = TRUE, type = "af", range = NULL)
-  
-  jan_cup_for_table3$NAB_station[i] <- NAB_list[i]
-  jan_cup_for_table3$attr_formatted[i] <- paste0(100 *round(mean(attr_tf_cup_jan), 3), " (",
-                                                 100 *round(quantile(attr_tf_cup_jan, c(0.025)), 3), " - ",
-                                                 100 *round(quantile(attr_tf_cup_jan, c(0.975)), 3), ")")
-}
-
-### for cup for all months for each station
-cup_for_table3 <- data.frame(NAB_station = unique(data_for_model$NAB_station), attr_formatted = rep(NA, 8))
-
-for(i in 1:8){
-  data_for_model_trees <- data_for_model %>% 
-    filter(date > ymd("2015-12-31")) %>%  #averaging across the calendar year instead of the exact study period by removing 2015 q4
-    filter(NAB_station == NAB_list[i])
-  attr_tf_cup <- attrdl(x = data_for_model_trees$cup_all_m, basis = cup_lag, cases = data_for_model_trees$n_cases,
-                        model = model2, dir = "back", sim = TRUE, cen = 0, tot = TRUE, type = "af", range = NULL)
-  
-  cup_for_table3$NAB_station[i] <- NAB_list[i]
-  cup_for_table3$attr_formatted[i] <- paste0(100 * round(mean(attr_tf_cup), 3), " (",
-                                             100 * round(quantile(attr_tf_cup, c(0.025)), 3), " - ",
-                                             100 * round(quantile(attr_tf_cup, c(0.975)), 3), ")")
-}
-
-### for march for trees for each station
-march_trees_for_table3 <- data.frame(NAB_station = unique(data_for_model$NAB_station), attr_formatted = rep(NA, 8))
-
-for(i in 1:8){
-  data_for_model_march <- filter(data_for_model, months == 3) %>% 
-    filter(NAB_station == NAB_list[i])
-  attr_tf_trees_march <- attrdl(x = data_for_model_march$trees_m, basis = trees_lag, cases = data_for_model_march$n_cases,
-                                model = model2, dir = "back", sim = TRUE, cen = 0, tot = TRUE, type = "af", range = NULL)
-  
-  march_trees_for_table3$NAB_station[i] <- NAB_list[i]
-  march_trees_for_table3$attr_formatted[i] <- paste0(100 *round(mean(attr_tf_trees_march), 3), " (",
-                                                     100 *round(quantile(attr_tf_trees_march, c(0.025)), 3), " - ",
-                                                     100 *round(quantile(attr_tf_trees_march, c(0.975)), 3), ")")
-}
-
-### for trees for all months for each station
-trees_for_table3 <- data.frame(NAB_station = unique(data_for_model$NAB_station), attr_formatted = rep(NA, 8))
-
-for(i in 1:8){
-  data_for_model_trees <- data_for_model %>% 
-    filter(date > ymd("2015-12-31")) %>%  #averaging across the calendar year instead of the exact study period by removing 2015 q4
-    filter(NAB_station == NAB_list[i])
-  attr_tf_tree <- attrdl(x = data_for_model_trees$trees_m, basis = trees_lag, cases = data_for_model_trees$n_cases,
-                         model = model2, dir = "back", sim = TRUE, cen = 0, tot = TRUE, type = "af", range = NULL)
-  
-  trees_for_table3$NAB_station[i] <- NAB_list[i]
-  trees_for_table3$attr_formatted[i] <- paste0(100 * round(mean(attr_tf_tree), 3), " (",
-                                               100 * round(quantile(attr_tf_tree, c(0.025)), 3), " - ",
-                                               100 * round(quantile(attr_tf_tree, c(0.975)), 3), ")")
-}
-
-
-jan_cup_for_table3 #effect of cup during jan
-write.table(jan_cup_for_table3, "clipboard", sep="\t", row.names=FALSE, col.names=FALSE, quote = FALSE)
-
-cup_for_table3 #effect of cup across whole year
-write.table(cup_for_table3, "clipboard", sep="\t", row.names=FALSE, col.names=FALSE, quote = FALSE)
-
-march_trees_for_table3  #effect of trees during March
-write.table(march_trees_for_table3, "clipboard", sep="\t", row.names=FALSE, col.names=FALSE, quote = FALSE)
-
-trees_for_table3 #effect of trees across whole year
-write.table(trees_for_table3, "clipboard", sep="\t", row.names=FALSE, col.names=FALSE, quote = FALSE)
+# ### Table 3: new version with CIs: attributable risk fraction over time for peak season and main season ################################################
+# NAB_list <- unique(data_for_model$NAB_station)
+# 
+# ### for jan for cup for each station
+# jan_cup_for_table3 <- data.frame(NAB_station = unique(data_for_model$NAB_station), attr_formatted = rep(NA, 8))
+# 
+# for(i in 1:8){
+#   data_for_model_jan <- filter(data_for_model, months == 1) %>% 
+#     filter(NAB_station == NAB_list[i])
+#   attr_tf_cup_jan <- attrdl(x = data_for_model_jan$cup_all_m, basis = cup_lag, cases = data_for_model_jan$n_cases,
+#                             model = model2, dir = "back", sim = TRUE, cen = 0, tot = TRUE, type = "af", range = NULL)
+#   
+#   jan_cup_for_table3$NAB_station[i] <- NAB_list[i]
+#   jan_cup_for_table3$attr_formatted[i] <- paste0(100 *round(mean(attr_tf_cup_jan), 3), " (",
+#                                                  100 *round(quantile(attr_tf_cup_jan, c(0.025)), 3), " - ",
+#                                                  100 *round(quantile(attr_tf_cup_jan, c(0.975)), 3), ")")
+# }
+# 
+# ### for cup for all months for each station
+# cup_for_table3 <- data.frame(NAB_station = unique(data_for_model$NAB_station), attr_formatted = rep(NA, 8))
+# 
+# for(i in 1:8){
+#   data_for_model_trees <- data_for_model %>% 
+#     filter(date > ymd("2015-12-31")) %>%  #averaging across the calendar year instead of the exact study period by removing 2015 q4
+#     filter(NAB_station == NAB_list[i])
+#   attr_tf_cup <- attrdl(x = data_for_model_trees$cup_all_m, basis = cup_lag, cases = data_for_model_trees$n_cases,
+#                         model = model2, dir = "back", sim = TRUE, cen = 0, tot = TRUE, type = "af", range = NULL)
+#   
+#   cup_for_table3$NAB_station[i] <- NAB_list[i]
+#   cup_for_table3$attr_formatted[i] <- paste0(100 * round(mean(attr_tf_cup), 3), " (",
+#                                              100 * round(quantile(attr_tf_cup, c(0.025)), 3), " - ",
+#                                              100 * round(quantile(attr_tf_cup, c(0.975)), 3), ")")
+# }
+# 
+# ### for march for trees for each station
+# march_trees_for_table3 <- data.frame(NAB_station = unique(data_for_model$NAB_station), attr_formatted = rep(NA, 8))
+# 
+# for(i in 1:8){
+#   data_for_model_march <- filter(data_for_model, months == 3) %>% 
+#     filter(NAB_station == NAB_list[i])
+#   attr_tf_trees_march <- attrdl(x = data_for_model_march$trees_m, basis = trees_lag, cases = data_for_model_march$n_cases,
+#                                 model = model2, dir = "back", sim = TRUE, cen = 0, tot = TRUE, type = "af", range = NULL)
+#   
+#   march_trees_for_table3$NAB_station[i] <- NAB_list[i]
+#   march_trees_for_table3$attr_formatted[i] <- paste0(100 *round(mean(attr_tf_trees_march), 3), " (",
+#                                                      100 *round(quantile(attr_tf_trees_march, c(0.025)), 3), " - ",
+#                                                      100 *round(quantile(attr_tf_trees_march, c(0.975)), 3), ")")
+# }
+# 
+# ### for trees for all months for each station
+# trees_for_table3 <- data.frame(NAB_station = unique(data_for_model$NAB_station), attr_formatted = rep(NA, 8))
+# 
+# for(i in 1:8){
+#   data_for_model_trees <- data_for_model %>% 
+#     filter(date > ymd("2015-12-31")) %>%  #averaging across the calendar year instead of the exact study period by removing 2015 q4
+#     filter(NAB_station == NAB_list[i])
+#   attr_tf_tree <- attrdl(x = data_for_model_trees$trees_m, basis = trees_lag, cases = data_for_model_trees$n_cases,
+#                          model = model2, dir = "back", sim = TRUE, cen = 0, tot = TRUE, type = "af", range = NULL)
+#   
+#   trees_for_table3$NAB_station[i] <- NAB_list[i]
+#   trees_for_table3$attr_formatted[i] <- paste0(100 * round(mean(attr_tf_tree), 3), " (",
+#                                                100 * round(quantile(attr_tf_tree, c(0.025)), 3), " - ",
+#                                                100 * round(quantile(attr_tf_tree, c(0.975)), 3), ")")
+# }
+# 
+# 
+# jan_cup_for_table3 #effect of cup during jan
+# write.table(jan_cup_for_table3, "clipboard", sep="\t", row.names=FALSE, col.names=FALSE, quote = FALSE)
+# 
+# cup_for_table3 #effect of cup across whole year
+# write.table(cup_for_table3, "clipboard", sep="\t", row.names=FALSE, col.names=FALSE, quote = FALSE)
+# 
+# march_trees_for_table3  #effect of trees during March
+# write.table(march_trees_for_table3, "clipboard", sep="\t", row.names=FALSE, col.names=FALSE, quote = FALSE)
+# 
+# trees_for_table3 #effect of trees across whole year
+# write.table(trees_for_table3, "clipboard", sep="\t", row.names=FALSE, col.names=FALSE, quote = FALSE)
 
 
 
@@ -1800,21 +1324,21 @@ write.table(trees_for_table3, "clipboard", sep="\t", row.names=FALSE, col.names=
 NAB_list <- unique(data_for_model$NAB_station)
 
 ### for sept for rhino for each station
-sep_rhino_for_table3 <- data.frame(NAB_station = unique(data_for_model$NAB_station), attr_formatted = rep(NA, 8))
-
-for(i in 1:8){
-  data_for_model_sep <- filter(data_for_model, months == 9) %>% 
-    #filter(years < 2020) %>% 
-    filter(NAB_station == NAB_list[i])
-  attr_tf_rhino_sep <- attrdl(x = data_for_model_sep$v_pos_prop_rhino_m21, basis = rhino_lag, cases = data_for_model_sep$n_cases,
-                              model = model2, dir = "back", sim = TRUE, cen = 0, tot = TRUE, type = "af", range = NULL)
-  
-  sep_rhino_for_table3$NAB_station[i] <- NAB_list[i]
-  sep_rhino_for_table3$attr_formatted[i] <- paste0(100 *round(mean(attr_tf_rhino_sep), 3), " (",
-                                                   100 *round(quantile(attr_tf_rhino_sep, c(0.025)), 3), " - ",
-                                                   100 *round(quantile(attr_tf_rhino_sep, c(0.975)), 3), ")")
-}
-sep_rhino_for_table3
+# sep_rhino_for_table3 <- data.frame(NAB_station = unique(data_for_model$NAB_station), attr_formatted = rep(NA, 8))
+# 
+# for(i in 1:8){
+#   data_for_model_sep <- filter(data_for_model, months == 9) %>% 
+#     #filter(years < 2020) %>% 
+#     filter(NAB_station == NAB_list[i])
+#   attr_tf_rhino_sep <- attrdl(x = data_for_model_sep$v_pos_prop_rhino_m21, basis = rhino_lag, cases = data_for_model_sep$n_cases,
+#                               model = model2, dir = "back", sim = TRUE, cen = 0, tot = TRUE, type = "af", range = NULL)
+#   
+#   sep_rhino_for_table3$NAB_station[i] <- NAB_list[i]
+#   sep_rhino_for_table3$attr_formatted[i] <- paste0(100 *round(mean(attr_tf_rhino_sep), 3), " (",
+#                                                    100 *round(quantile(attr_tf_rhino_sep, c(0.025)), 3), " - ",
+#                                                    100 *round(quantile(attr_tf_rhino_sep, c(0.975)), 3), ")")
+# }
+# sep_rhino_for_table3
 
 # ### Table 3: the percent of AR for each pollen type by each city across the main pollen season ##################
 # attr_f_cup_jan <- bind_cols(data_for_model, attr_f_df) %>%
