@@ -22,7 +22,7 @@ library(daymetr)
 
 
 #note: will need to do a final extraction of numbers of cases where census block is missing and zipcode is used
-# need to also decide for sure about whether 40 years old is a good cut off point
+
 
 #rm(list = ls())
 
